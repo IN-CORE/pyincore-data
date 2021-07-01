@@ -50,7 +50,7 @@ class CensusUtil():
         # ### Base API URL parameters, found at https://api.census.gov/data.html
 
         # Variable parameters
-        get_vars = 'GEO_ID, NAME, P005001, P005003, P005004, P005010'
+        get_vars = 'GEO_ID,NAME,P005001,P005003,P005004,P005010'
         # List variables to convert from dtype object to integer
         int_vars = ['P005001', 'P005003', 'P005004', 'P005010']
         # GEO_ID  = Geographic ID
@@ -81,6 +81,7 @@ class CensusUtil():
         # Set up hyperlink for Census API
         api_hyperlink = ('https://api.census.gov/data/' + vintage + '/'+dataset_name + '?get=' + get_vars +
                          '&in=state:' + state + '&in=county:' + county + '&for=block%20group:*')
+
         print("Census API data from: " + api_hyperlink)
 
         # Obtain Census API JSON Data
