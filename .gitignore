@@ -24,7 +24,7 @@ hs_err_pid*
 .vscode
 
 # EGG info
-pyincore_viz.egg-info
+pyincore_data.egg-info
 
 # IDEA - generated artifacts
 **/out/
