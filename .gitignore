@@ -18,7 +18,7 @@ hs_err_pid*
 # setup and build
 **/build/
 **/dist/
-**/pyincore-viz.egg-info/
+**/pyincore-data.egg-info/
 
 # VSCODE
 .vscode

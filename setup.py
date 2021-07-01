@@ -33,5 +33,5 @@ setup(
         "data", "census"
     ],
     license="Mozilla Public License v2.0",
-    url="https://git.ncsa.illinois.edu/incore/pyincore-viz"
+    url="https://git.ncsa.illinois.edu/incore/pyincore-data"
 )
