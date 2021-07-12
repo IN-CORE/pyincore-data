@@ -204,7 +204,7 @@ class CensusUtil():
             logger.debug(error_msg)
             raise Exception(error_msg)
 
-        return cen_blockgroup[save_columns]
+        return cen_blockgroup[save_columns], bgmap
 
     @staticmethod
     def convert_dislocation_gpd_to_shapefile(in_gpd, programname, savefile):
