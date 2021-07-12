@@ -3,5 +3,3 @@ GDAL>=3.0.4
 numpy>=1.21.0
 pandas>=1.2.5
 folium>=0.11.0
-pyincore>=0.9.0
-
