@@ -15,7 +15,7 @@ setup(
         '': ['*.ini']
     },
     description='IN-CORE data python package',
-    long_description=("This package is designed for ."),
+    long_description="This package is designed for .",
     # TODO need to figure out what are the dependency requirements
     # TODO this is a hack, really should only be packages needed to run
     install_requires=[line.strip() for line in open("requirements.txt").readlines()],
