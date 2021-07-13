@@ -171,7 +171,6 @@ class CensusUtil():
         shp_blockgroup = pd.concat(appended_countyshp)
 
         # Clean Data - Merge Census demographic data to the appended shapefiles
-
         cen_shp_blockgroup_merged = pd.merge(shp_blockgroup, cen_blockgroup,
                                              left_on='GEOID10', right_on='bgid', how='left')
 
@@ -200,7 +199,8 @@ class CensusUtil():
             if not out_shapefile and not out_csv and not out_html:
                 shutil.rmtree(program_name)
         except OSError as e:
-            error_msg = "Error: Failed to remove temp directory"
+            error_msg = "Error: Failed to remove either " + shapefile_dir \
+                        + " or " + program_name + " directory"
             logger.debug(error_msg)
             raise Exception(error_msg)
 
