@@ -34,15 +34,12 @@ class CensusUtil():
             out_csv (bool): Save output dataframe as csv.
             out_shapefile (bool): Save processed census geodataframe as shapefile.
             out_html (bool): Save processed folium map to html.
-            geo_name (str): Name of geo area - used for naming output files
-            program_name (str): name of directory used to save output files
+            geo_name (str): Name of geo area - used for naming output files.
+            program_name (str): name of directory used to save output files.
 
         Returns:
-            geopandas dataframe (obj): Dataframe for dislocation analysis
-            folium map (obj): Optional, map of geodataframe
-            csv file (file): Optional, output csv file in IN-CORE required format
-            html file (file): output html file of folium map
-            shp file (file): GIS shapefile of geodataframe
+            obj: Dataframe for dislocation analysis.
+            obj: dictionary that contains geodataframe and folium map
         """
 
         logger = globals.LOGGER
