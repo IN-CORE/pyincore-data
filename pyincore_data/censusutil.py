@@ -27,7 +27,7 @@ class CensusUtil():
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
 
         Args:
-            state_counties (list): List of concatenated State and County FIPS Codes.
+            state_counties (list): A List of concatenated State and County FIPS Codes.
                 see full list https://www.nrcs.usda.gov/wps/portal/nrcs/detail/national/home/?cid=nrcs143_013697
             vintage (str): Census Year.
             dataset_name (str): Census dataset name.
@@ -35,11 +35,11 @@ class CensusUtil():
             out_shapefile (bool): Save processed census geodataframe as shapefile.
             out_html (bool): Save processed folium map to html.
             geo_name (str): Name of geo area - used for naming output files.
-            program_name (str): name of directory used to save output files.
+            program_name (str): Name of directory used to save output files.
 
         Returns:
-            obj, dict: Dataframe for dislocation analysis and
-            dictionary that contains geodataframe and folium map
+            obj, dict: A dataframe for dislocation analysis, and
+            a dictionary containing geodataframe and folium map
 
         """
 
