@@ -38,8 +38,9 @@ class CensusUtil():
             program_name (str): name of directory used to save output files.
 
         Returns:
-            obj: Dataframe for dislocation analysis.
-            obj: dictionary that contains geodataframe and folium map
+            obj, dict: Dataframe for dislocation analysis and
+            dictionary that contains geodataframe and folium map
+
         """
 
         logger = globals.LOGGER
