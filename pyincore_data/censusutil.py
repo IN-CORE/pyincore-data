@@ -39,7 +39,8 @@ class CensusUtil():
 
         Returns:
             obj: Dataframe for dislocation analysis.
-            obj: dictionary that contains geodataframe and folium map
+            obj: Dictionary containing geodataframe and folium map
+
         """
 
         logger = globals.LOGGER
