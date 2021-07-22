@@ -35,7 +35,7 @@ else
 fi
 
 for v in ${TAG}; do
-    ${DEBUG} docker tag incore/data-jetty hub.ncsa.illinois.edu/incore/pyincore-data:${v}
+    ${DEBUG} docker tag incore/pyincore-data hub.ncsa.illinois.edu/incore/pyincore-data:${v}
 
     ${DEBUG} docker push ${SERVER}/incore/pyincore-data:${v}
 done
