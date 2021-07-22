@@ -3,6 +3,8 @@
 # ----------------------------------------------------------------------
 FROM mambaorg/micromamba AS builder
 
+user root
+
 # install packages
 WORKDIR /src
 COPY requirements.txt .
