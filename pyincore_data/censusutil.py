@@ -311,6 +311,8 @@ class CensusUtil():
         temp_id = list(range(len(pd[key])))
         temp_id = [str(i) for i in temp_id]
         choro_data = dict(zip(temp_id, pd[key]))
+        # check the minimum value to use it to nan value, since nan value makes an error.
+        min_val = pd[key].min()
         for item in choro_data:
             if isnan(choro_data[item]):
                 choro_data[item] = 0
