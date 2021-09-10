@@ -12,7 +12,7 @@ $DEBUG docker login ${SERVER}
 # Find out what branch we are on
 BRANCH=${BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"}
 
-PKG_VERSION=$(cat server/build.gradle | grep "archiveVersion" | head -1 | awk -F= "{ print $2 }" | sed "s/[archiveVersion =,',]//g")
+PKG_VERSION=$(cat source/conf.py | grep "release" | head -1 | awk -F= "{ print $2 }" | sed "s/[release =,',]//g")
 
 # Find out the version
 if [ "$BRANCH" = "master" ]; then
