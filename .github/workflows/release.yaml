@@ -32,11 +32,9 @@ jobs:
 
       - name: create release
         if: github.event_name != 'pull_request' && github.repository == env.MAIN_REPO
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.release_info.outputs.version }}
-          release_name: Release ${{ steps.release_info.outputs.version }}
+          name: Release ${{ steps.release_info.outputs.version }}
           body: ${{ steps.release_info.outputs.changelog }}
