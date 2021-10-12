@@ -26,7 +26,8 @@ class CensusUtil():
 
     @staticmethod
     def get_blockgroupdata_for_dislocation(state_counties: list, vintage: str = "2010", dataset_name: str = 'dec/sf1',
-                                           out_csv: bool = False, out_shapefile: bool = False, out_html: bool = False,
+                                           out_csv: bool = False, out_shapefile: bool = False,
+                                           out_geopackage: bool = False, out_html: bool = False,
                                            geo_name: str = "geo_name", program_name: str = "program_name"):
 
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
@@ -38,6 +39,7 @@ class CensusUtil():
             dataset_name (str): Census dataset name.
             out_csv (bool): Save output dataframe as csv.
             out_shapefile (bool): Save processed census geodataframe as shapefile.
+            out_geopackage (boo): Save processed census geodataframe as geopackage
             out_html (bool): Save processed folium map to html.
             geo_name (str): Name of geo area - used for naming output files.
             program_name (str): Name of directory used to save output files.
@@ -196,11 +198,14 @@ class CensusUtil():
         if out_shapefile:
             CensusUtil.convert_dislocation_gpd_to_shapefile(cen_shp_blockgroup_merged, program_name, savefile)
 
+        if out_geopackage:
+            CensusUtil.convert_dislocation_gpd_to_geopackage(cen_shp_blockgroup_merged, program_name, savefile)
+
         # clean up shapefile temp directory
         # Try to remove tree; if failed show an error using try...except on screen
         try:
             shutil.rmtree(shapefile_dir)
-            if not out_shapefile and not out_csv and not out_html:
+            if not out_shapefile and not out_csv and not out_html and not out_geopackage:
                 shutil.rmtree(program_name)
         except OSError as e:
             error_msg = "Error: Failed to remove either " + shapefile_dir \
@@ -223,6 +228,20 @@ class CensusUtil():
         # save cen_shp_blockgroup_merged shapefile
         print('Shapefile data file saved to: '+programname+'/'+savefile+".shp")
         in_gpd.to_file(programname+'/'+savefile+".shp")
+
+    @staticmethod
+    def convert_dislocation_gpd_to_geopackage(in_gpd, programname, savefile):
+        """Create shapefile of dislocation geodataframe.
+
+        Args:
+            in_gpd (object): Geodataframe of the dislocation.
+            programname (str): Output directory name.
+            savefile (str): Output shapefile name.
+
+        """
+        # save cen_shp_blockgroup_merged shapefile
+        print('GeoPackage data file saved to: '+programname+'/'+savefile+".gpkg")
+        in_gpd.to_file(programname+'/'+savefile+".gpkg", driver="GPKG")
 
     @staticmethod
     def convert_dislocation_pd_to_csv(in_pd, save_columns, programname, savefile):
