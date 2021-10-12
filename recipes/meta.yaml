@@ -1,0 +1,65 @@
+{% set name = "pyincore-data" %}
+{% set version = "0.2.0" %}
+ 
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+ 
+source:
+  path: /path/to/pyincore-data
+  # This can be changed based on the local path
+  #url: {{ name }}-{{ version }}.tar.gz
+  #md5: {{ hash_value }}
+ 
+build:
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+  noarch: python
+  script: "{{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . " # verbose
+  skip: True  # [py<36]
+ 
+requirements:
+  build:
+    - python>=3.8
+    - pip
+    - numpy 1.16
+ 
+  host:
+    - python>=3.6
+    - pip
+    - numpy 1.16
+     
+  run:
+    - python>=3.6
+    - {{ pin_compatible('numpy') }}
+    - Fiona>=1.8.13
+    - folium>=0.11.0
+    - GDAL>=3.0.4
+    - pandas>=1.2.5
+    - pytest>=3.9.0
+    - geopandas>=0.8.1
+    - ipyleaflet>=0.13.4
+    - branca>=0.3.1
+ 
+test:
+  # Python imports
+  imports:
+    - pandas
+   
+  requires:
+    # Put any additional test requirements here.  For example
+    - pytest>=3.9
+  commands:
+    # You can put built-in test commands to be run here.  Use this to test that the entry points work.
+     python -c "import pyincore_data; print('SUCCESS')" #; pyincore.test_client()"
+    # You can also put a file called run_test.py in the recipe that will be run at test time.
+ 
+about:
+  home: https://incore.ncsa.illinois.edu
+  license: MPL-2.0
+  summary: 'Python library for data manipulation and handling of pyIncore'
+  description: 'pyincore-data is a Python project that provides utilities for manipulating and handling for use with
+  pyincore'
+  dev_url: https://github.com/IN-CORE/pyincore-data
+  doc_url: https://incore.ncsa.illinois.edu/doc/incore
