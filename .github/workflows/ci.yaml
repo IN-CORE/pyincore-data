@@ -33,7 +33,7 @@ jobs:
       - name: Run tests with pytest
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_data/.incorepw
-          $CONDA/bin/pytest tests/pyincore_data/test_pyincore_data.py --exitfirst --verbose --failed-first --cov=. --cov-report html
+          $CONDA/bin/pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
 
 #  # ----------------------------------------------------------------------
 #  # DOCKER BUILD
