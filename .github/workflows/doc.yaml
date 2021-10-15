@@ -1,39 +1,24 @@
-name: CI
+name: DOC
 
 on:
   push:
     branches:
       - master
       - develop
-
+      - 'release/*'
     tags:
       - '*'
 
   pull_request:
+    branches:
+      - master
+      - develop
+      - 'release/*'
 
 env:
   MAIN_REPO: IN-CORE/pyincore-data
 
 jobs:
-
-  #-----------------------------------------------------------------------
-  # UNIT TEST
-  # ----------------------------------------------------------------------
-  unit-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install dependencies
-        run: |
-          $CONDA/bin/conda env update --file environment.yaml --name base
-      - name: Run tests with pytest
-        run: |
-          echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_data/.incorepw
-          $CONDA/bin/pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
 
   # ----------------------------------------------------------------------
   # DOCKER BUILD
@@ -78,18 +63,8 @@ jobs:
       # build image
       - name: Build image
         uses: elgohr/Publish-Docker-Github-Action@3.04
-        env:
-          BRANCH: ${{ env.GITHUB_BRANCH }}
-          VERSION: ${{ env.VERSION }}
-          BUILDNUMBER: ${{ github.run_number }}
-          GITSHA1: ${{ github.sha }}
         with:
-          registry: hub.ncsa.illinois.edu
           name: incore/doc/pyincore-data
-          #username: ${{ secrets.HUB_USERNAME }}
-          #password: ${{ secrets.HUB_PASSWORD }}
-          tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
           no_push: true
 
       # this will publish to NCSA
