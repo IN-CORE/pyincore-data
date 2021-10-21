@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-##[0.3.0] - unreleased
+##[0.3.0] - 2021-10-27
 ### Added
 - release script for building documentation automatically. [#1](https://github.com/IN-CORE/pyincore-data/issues/1)
+- Automatic documentation container build and publish. [#7](https://github.com/IN-CORE/pyincore-data/issues/7)
+- Conda build recipe for publishing the pyincore-data to conda channel. [#5](https://github.com/IN-CORE/pyincore-data/issues/5)
+- CensusUtil's output as geopackage data fromat. [#4](https://github.com/IN-CORE/pyincore-data/issues/4)
+- Unit-test added to github action. [#11](https://github.com/IN-CORE/pyincore-data/issues/11)
 
 ## [0.2.0] - 2021-09-01
 ### Added
