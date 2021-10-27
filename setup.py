@@ -8,8 +8,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyincore-data',
-    version='0.2.0',
-    packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    version='0.3.0',
+    packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
     package_data={
         '': ['*.ini']
