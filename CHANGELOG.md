@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Renamed master branch to main. [#17](https://github.com/IN-CORE/pyincore-data/issues/17)
 
+### Fixed
+- Auto build of documentation container. [#19](https://github.com/IN-CORE/pyincore-data/issues/19)
 ##[0.3.0] - 2021-10-27
 ### Added
 - release script for building documentation automatically. [#1](https://github.com/IN-CORE/pyincore-data/issues/1)
