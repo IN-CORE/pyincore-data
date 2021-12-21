@@ -5,7 +5,7 @@ channels:
   - in-core/label/rc
 dependencies:
   - python=3.8
-  - GDAL>=3.0.4
+  - GDAL>=3.3.1
   - numpy>=1.16.0
   - pytest>=3.9.0
   - pip
