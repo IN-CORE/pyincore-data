@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+##[Unreleased] 
+### Changed
+- Renamed master branch to main. [#17](https://github.com/IN-CORE/pyincore-data/issues/17)
+
+### Fixed
+- Auto build of documentation container. [#19](https://github.com/IN-CORE/pyincore-data/issues/19)
+- Pytest error in github action. [#20](https://github.com/IN-CORE/pyincore-data/issues/20)
+
 ##[0.3.0] - 2021-10-27
 ### Added
 - release script for building documentation automatically. [#1](https://github.com/IN-CORE/pyincore-data/issues/1)

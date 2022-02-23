@@ -5,10 +5,12 @@ channels:
   - in-core/label/rc
 dependencies:
   - python=3.8
-  - GDAL>=3.0.4
+  - Fiona>=1.8.13
+  - GDAL>=3.3.1
   - numpy>=1.16.0
+  - folium>=0.11.0
+  - pandas>=1.2.5
+  - geopandas>=0.8.1
   - pytest>=3.9.0
-  - pip
-  - pip:
-      - -r requirements.txt
-      - -e .
+  - ipyleaflet>=0.13.4
+  - branca>=0.3.1
