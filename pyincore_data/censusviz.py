@@ -3,7 +3,6 @@
 # This program and the accompanying materials are made available under the
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
-
 import json
 from math import isnan
 
@@ -21,162 +20,9 @@ from branca.colormap import linear
 from pyincore_data import globals
 from zipfile import ZipFile
 
-logger = globals.LOGGER
 
-class CensusUtil():
-    """Utility methods for Census data and API"""
-
-    @staticmethod
-    def get_census_data(state:str=None, county:str=None, year:str=None, data_source:str=None, columns:str=None,
-                         geo_type:str = None, data_name:str = None):
-        """Create json and pandas DataFrame for census api request result.
-
-            Args:
-                state (str): A string of state FIPS with comma separated format. e.g, '41, 42' or '*'
-                county (str): A string of county FIPS with comma separated format. e.g, '017,029,045,091,101' or '*'
-                year (str): Census Year.
-                data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
-                columns (str): Column names for request data with comma separated format.
-                    e.g, 'GEO_ID,NAME,P005001,P005003,P005004,P005010'
-                geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
-                data_name (str): Optional for getting different dataset. e.g, 'component'
-
-            Returns:
-                dict, object: A json list and a dataframe for census api result
-
-        """
-        # create census api data url
-        data_url = CensusUtil.generate_census_api_url(state, county, year, data_source, columns, geo_type, data_name)
-
-        api_json, api_df = CensusUtil.request_census_api(data_url)
-
-        return api_json, api_df
-
-    @staticmethod
-    def generate_census_api_url(state:str=None, county:str=None, year:str=None, data_source:str=None, columns:str=None,
-                                geo_type:str = None, data_name:str = None):
-        """Create url string to access census data api.
-
-            Args:
-                state (str): A string of state FIPS with comma separated format. e.g, '41, 42' or '*'
-                county (str): A string of county FIPS with comma separated format. e.g, '017,029,045,091,101' or '*'
-                year (str): Census Year.
-                data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
-                columns (str): Column names for request data with comma separated format.
-                    e.g, 'GEO_ID,NAME,P005001,P005003,P005004,P005010'
-                geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
-                data_name (str): Optional for getting different dataset. e.g, 'component'
-
-            Returns:
-                string: A string for representing census api url
-
-        """
-        # check if the state is not none
-        if state is None:
-            error_msg = "State value must be provided."
-            logger.error(error_msg)
-            raise Exception(error_msg)
-
-        if geo_type is not None:
-            if county is None:
-                error_msg = "State and county value must be provided when geo_type is provided."
-                logger.error(error_msg)
-                raise Exception(error_msg)
-
-        # Set up url for Census API
-        base_url = f'https://api.census.gov/data/{year}/{data_source}'
-        if data_name is not None:
-            base_url = f'https://api.census.gov/data/{year}/{data_source}/{data_name}'
-
-        data_url = f'{base_url}?get={columns}'
-        if county is None:  # only state is provided. There shouldn't be any geo_type
-            data_url = f'{data_url}&for=state:{state}'
-        else: # county has been provided and there could be geo_type or not
-            if geo_type is None:
-                data_url = f'{data_url}&in=state:{state}&for=county:{county}'
-            else:
-                data_url = f'{data_url}&for={geo_type}&in=state:{state}&in=county:{county}'
-
-        return data_url
-
-    @staticmethod
-    def request_census_api(data_url):
-        """Request census data to api and gets the output data
-
-            Args:
-                data_url (str): url for obtaining the data from census api
-            Returns:
-                dict, object: A json list and a dataframe for census api result
-
-        """
-        # Obtain Census API JSON Data
-        request_json = requests.get(data_url)
-
-        if request_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API. Please check your parameters."
-            # logger.error(error_msg)
-            raise Exception(error_msg)
-
-        # Convert the requested json into pandas dataframe
-
-        api_json = request_json.json()
-        api_df = pd.DataFrame(columns=api_json[0], data=api_json[1:])
-
-        return api_json, api_df
-
-    @staticmethod
-    def get_fips_by_state_county(state:str, county:str):
-        """Get FIPS code by using state and county name.
-
-            Args:
-                state (str): State name. e.g, 'illinois'
-                county (str): County name. e.g, 'champaign'
-            Returns:
-                str: A string of FIPS code
-
-        """
-        api_url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
-        out_fips = None
-        api_json = requests.get(api_url)
-        query_value = county + ' County, ' + state
-        if api_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API."
-            raise Exception(error_msg)
-
-        # content_json = api_json.json()
-        df = pd.DataFrame(columns=api_json.json()[0], data=api_json.json()[1:])
-        selected_row = df.loc[df['NAME'].str.lower() == query_value.lower()]
-        if selected_row.size > 0:
-            out_fips = selected_row.iloc[0]['state'] + selected_row.iloc[0]['county']
-        else:
-            error_msg = "There is no FIPS code for given state and county combination."
-            logger.error(error_msg)
-            raise Exception(error_msg)
-
-        return out_fips
-
-    @staticmethod
-    def get_fips_by_state(state:str):
-        """Create Geopandas DataFrame for population dislocation analysis from census dataset.
-
-            Args:
-                state (str): State name. e.g, 'illinois'
-
-            Returns:
-                obj: A json list of county FIPS code in the given state
-
-        """
-        api_url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
-        api_json = requests.get(api_url)
-        if api_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API."
-            logger.error(error_msg)
-            raise Exception(error_msg)
-
-        # content_json = api_json.json()
-        out_fips = api_json.json()
-
-        return out_fips
+class CensusViz():
+    """Utility methods for Geospatial Visualization"""
 
     @staticmethod
     def get_blockgroupdata_for_dislocation(state_counties: list, vintage: str = "2010", dataset_name: str = 'dec/sf1',
@@ -203,6 +49,11 @@ class CensusUtil():
             a dictionary containing geodataframe and folium map
 
         """
+
+        logger = globals.LOGGER
+
+        # ### Base API URL parameters, found at https://api.census.gov/data.html
+
         # Variable parameters
         get_vars = 'GEO_ID,NAME,P005001,P005003,P005004,P005010'
         # List variables to convert from dtype object to integer
@@ -232,17 +83,25 @@ class CensusUtil():
             logger.debug('State:  '+state)
             logger.debug('County: '+county)
 
-            # Set up hyperlink for Census API
-            api_hyperlink = CensusUtil.generate_census_api_url(
-                state, county, vintage, dataset_name, get_vars, 'block%20group')
+        # Set up hyperlink for Census API
+        api_hyperlink = ('https://api.census.gov/data/' + vintage + '/'+dataset_name + '?get=' + get_vars +
+                         '&in=state:' + state + '&in=county:' + county + '&for=block%20group:*')
 
-            logger.info("Census API data from: " + api_hyperlink)
+        print("Census API data from: " + api_hyperlink)
 
-            # Obtain Census API JSON Data
-            apijson, apidf = CensusUtil.request_census_api(api_hyperlink)
-            print(apidf.size)
-            # Append county data makes it possible to have multiple counties
-            appended_countydata.append(apidf)
+        # Obtain Census API JSON Data
+        apijson = requests.get(api_hyperlink)
+
+        if apijson.status_code != 200:
+            error_msg = "Failed to download the data from Census API."
+            logger.error(error_msg)
+            raise Exception(error_msg)
+
+        # Convert the requested json into pandas dataframe
+        apidf = pd.DataFrame(columns=apijson.json()[0], data=apijson.json()[1:])
+
+        # Append county data makes it possible to have multiple counties
+        appended_countydata.append(apidf)
 
         # Create dataframe from appended county data
         cen_blockgroup = pd.concat(appended_countydata)
@@ -351,7 +210,7 @@ class CensusUtil():
         except OSError as e:
             error_msg = "Error: Failed to remove either " + shapefile_dir \
                         + " or " + program_name + " directory"
-            logger.error(error_msg)
+            logger.debug(error_msg)
             raise Exception(error_msg)
 
         return cen_blockgroup[save_columns], bgmap
