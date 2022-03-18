@@ -140,7 +140,7 @@ class CensusUtil():
         api_json = requests.get(api_url)
         query_value = county + ' County, ' + state
         if api_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API."
+            error_msg = "Failed to download the data from Census API. Please look up Google for getting the FIPS code."
             raise Exception(error_msg)
 
         # content_json = api_json.json()
