@@ -125,7 +125,7 @@ class CensusUtil():
         return api_json, api_df
 
     @staticmethod
-    def get_fips_by_state_county(state:str, county:str):
+    def get_fips_by_state_county(state:str, county:str, year:str=2010):
         """Get FIPS code by using state and county name.
 
             Args:
@@ -135,7 +135,7 @@ class CensusUtil():
                 str: A string of FIPS code
 
         """
-        api_url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
+        api_url = f'https://api.census.gov/data/{year}/dec/sf1?get=NAME&for=county:*'
         out_fips = None
         api_json = requests.get(api_url)
         query_value = county + ' County, ' + state
@@ -156,7 +156,7 @@ class CensusUtil():
         return out_fips
 
     @staticmethod
-    def get_fips_by_state(state:str):
+    def get_fips_by_state(state:str, year:str=2010):
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
 
             Args:
@@ -166,7 +166,7 @@ class CensusUtil():
                 obj: A json list of county FIPS code in the given state
 
         """
-        api_url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
+        api_url = f'https://api.census.gov/data/{year}/dec/sf1?get=NAME&for=county:*'
         api_json = requests.get(api_url)
         if api_json.status_code != 200:
             error_msg = "Failed to download the data from Census API."
