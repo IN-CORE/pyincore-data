@@ -245,7 +245,7 @@ class CensusUtil():
             appended_countydata.append(apidf)
 
         # Create dataframe from appended county data
-        cen_blockgroup = pd.concat(appended_countydata)
+        cen_blockgroup = pd.concat(appended_countydata, ignore_index=True)
 
         # Add variable named "Survey" that identifies Census survey program and survey year
         cen_blockgroup['Survey'] = vintage+' '+dataset_name
