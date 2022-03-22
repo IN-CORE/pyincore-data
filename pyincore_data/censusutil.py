@@ -193,7 +193,7 @@ class CensusUtil():
             dataset_name (str): Census dataset name.
             out_csv (bool): Save output dataframe as csv.
             out_shapefile (bool): Save processed census geodataframe as shapefile.
-            out_geopackage (boo): Save processed census geodataframe as geopackage
+            out_geopackage (bool): Save processed census geodataframe as geopackage
             out_html (bool): Save processed folium map to html.
             geo_name (str): Name of geo area - used for naming output files.
             program_name (str): Name of directory used to save output files.
