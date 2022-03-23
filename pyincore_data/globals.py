@@ -8,7 +8,7 @@ import os
 import logging
 from logging import config as logging_config
 
-PACKAGE_VERSION = "0.3.0"
+PACKAGE_VERSION = "0.4.0"
 
 PYINCORE_DATA_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 
