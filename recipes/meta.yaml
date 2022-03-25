@@ -6,7 +6,7 @@ package:
   version: {{ version }}
  
 source:
-  path: /path/to/pyincore-data
+  path: ../
   # This can be changed based on the local path
   #url: {{ name }}-{{ version }}.tar.gz
   #md5: {{ hash_value }}
