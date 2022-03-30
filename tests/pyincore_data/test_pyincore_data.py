@@ -19,3 +19,15 @@ def test_get_blockgroupdata_for_dislocation():
     disloc_df, bgmap = CensusUtil.get_blockgroupdata_for_dislocation(state_counties)
 
     assert disloc_df['Survey'][0] == '2010 dec/sf1'
+
+
+def test_get_fips_by_state():
+    fips = CensusUtil.get_fips_by_state("illinois")
+
+    assert 'NAME' in fips[0]
+
+
+def test_get_fips_by_state_county():
+    fips = CensusUtil.get_fips_by_state_county("illinois", "champaign")
+
+    assert fips == '17019'
