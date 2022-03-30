@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-##[0.4.0] - 2022-03-29 
+## [0.4.0] - 2022-03-30 
 ### Added
 - Parameters for regulating data to Census utility. [#21](https://github.com/IN-CORE/pyincore-data/issues/21)
 - Create a general method for obtaining the census data. [#22](https://github.com/IN-CORE/pyincore-data/issues/22)
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Auto build of documentation container. [#19](https://github.com/IN-CORE/pyincore-data/issues/19)
 - Pytest error in github action. [#20](https://github.com/IN-CORE/pyincore-data/issues/20)
 
-##[0.3.0] - 2021-10-27
+## [0.3.0] - 2021-10-27
 ### Added
 - release script for building documentation automatically. [#1](https://github.com/IN-CORE/pyincore-data/issues/1)
 - Automatic documentation container build and publish. [#7](https://github.com/IN-CORE/pyincore-data/issues/7)
