@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.1] - 2022-3-31
+### Fixed
+- Documentation doesn't show the content properfly. [#21](https://github.com/IN-CORE/pyincore-data/issues/21)
+
 ## [0.4.0] - 2022-03-30 
 ### Added
 - Parameters for regulating data to Census utility. [#21](https://github.com/IN-CORE/pyincore-data/issues/21)
