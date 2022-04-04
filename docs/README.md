@@ -13,7 +13,7 @@ Install [Docker Desktop](https://www.docker.com/) for your OS and change directo
 
 1. Build container
     ```
-    docker build -f Dockerfile.docs --no-cache -t pyincore_data_docs .
+    docker build -f Dockerfile --no-cache -t pyincore_data_docs .
     ```
     The container's name is **pyincore_data_docs** in this example.
     
