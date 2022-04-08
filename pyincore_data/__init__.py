@@ -7,5 +7,7 @@
 import pyincore_data.globals
 
 from pyincore_data.censusutil import CensusUtil
+from pyincore_data.censusviz import CensusViz
+from pyincore_data.utils.datautil import DataUtil
 
 __version__ = pyincore_data.globals.PACKAGE_VERSION
