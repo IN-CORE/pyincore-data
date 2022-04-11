@@ -16,6 +16,7 @@ from pyincore_data import globals
 
 logger = globals.LOGGER
 
+
 class CensusViz():
     """Utility methods for Census data and visualization"""
 
@@ -35,7 +36,7 @@ class CensusViz():
         center_y = in_gpd.bounds.miny.mean()
 
         out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
-                         crs=projections.EPSG3857, scroll_wheel_zoom=True)
+                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
 
         in_gpd_tmp = in_gpd[['GEOID10', 'phispbg', 'pblackbg', 'geometry']]
         geo_data_dic = json.loads(in_gpd_tmp.to_json())

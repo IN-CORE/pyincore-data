@@ -18,12 +18,13 @@ from pyincore_data.utils.datautil import DataUtil
 
 logger = globals.LOGGER
 
+
 class CensusUtil():
     """Utility methods for Census data and API"""
 
     @staticmethod
-    def get_census_data(state:str=None, county:str=None, year:str=None, data_source:str=None, columns:str=None,
-                         geo_type:str = None, data_name:str = None):
+    def get_census_data(state: str = None, county: str = None, year: str = None, data_source: str = None,
+                        columns: str = None, geo_type: str = None, data_name: str = None):
         """Create json and pandas DataFrame for census api request result.
 
             Args:
@@ -48,8 +49,8 @@ class CensusUtil():
         return api_json, api_df
 
     @staticmethod
-    def generate_census_api_url(state:str=None, county:str=None, year:str=None, data_source:str=None, columns:str=None,
-                                geo_type:str = None, data_name:str = None):
+    def generate_census_api_url(state: str = None, county: str = None, year: str = None, data_source: str = None,
+                                columns: str = None, geo_type: str = None, data_name: str = None):
         """Create url string to access census data api.
 
             Args:
@@ -86,7 +87,7 @@ class CensusUtil():
         data_url = f'{base_url}?get={columns}'
         if county is None:  # only state is provided. There shouldn't be any geo_type
             data_url = f'{data_url}&for=state:{state}'
-        else: # county has been provided and there could be geo_type or not
+        else:   # county has been provided and there could be geo_type or not
             if geo_type is None:
                 data_url = f'{data_url}&in=state:{state}&for=county:{county}'
             else:
@@ -120,7 +121,7 @@ class CensusUtil():
         return api_json, api_df
 
     @staticmethod
-    def get_fips_by_state_county(state:str, county:str, year:str=2010):
+    def get_fips_by_state_county(state: str, county: str, year: str = 2010):
         """Get FIPS code by using state and county name.
 
             Args:
@@ -151,7 +152,7 @@ class CensusUtil():
         return out_fips
 
     @staticmethod
-    def get_fips_by_state(state:str, year:str=2010):
+    def get_fips_by_state(state: str, year: str = 2010):
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
 
             Args:
