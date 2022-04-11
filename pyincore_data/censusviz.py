@@ -46,8 +46,8 @@ class CensusViz():
 
         in_gpd_tmp = in_gpd[['GEOID10', 'phispbg', 'pblackbg', 'geometry']]
         geo_data_dic = json.loads(in_gpd_tmp.to_json())
-        hisp_choro_data = CensusUtil.create_choro_data_from_pd(in_gpd, 'phispbg')
-        black_choro_data = CensusUtil.create_choro_data_from_pd(in_gpd, 'pblackbg')
+        hisp_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, 'phispbg')
+        black_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, 'pblackbg')
 
         # Add Percent Hispanic to Map
         layer1 = ipylft.Choropleth(
