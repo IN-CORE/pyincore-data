@@ -4,20 +4,12 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import json
-from math import isnan
-
 import requests
 import os
 import pandas as pd
 import geopandas as gpd
-import folium as fm
 import urllib.request
 import shutil
-import ipyleaflet as ipylft
-
-from ipyleaflet import projections
-from branca.colormap import linear
 from pyincore_data import globals
 from zipfile import ZipFile
 

@@ -3,19 +3,6 @@
 # This program and the accompanying materials are made available under the
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
-import collections
-import csv
-import math
-import os
-import re
-from typing import List, Dict
-from collections import Counter
-
-from decimal import getcontext, Decimal
-
-from pyincore import DataService
-from pyincore.globals import DAMAGE_PRECISION
-from pyincore.utils import evaluateexpression
 
 
 class DataUtil:
