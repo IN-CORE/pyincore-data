@@ -264,50 +264,7 @@ class CensusUtil():
         cen_blockgroup['pblackbg'] = cen_blockgroup['P005004'] / cen_blockgroup['P005001'] * 100
         cen_blockgroup['phispbg'] = cen_blockgroup['P005010'] / cen_blockgroup['P005001'] * 100
 
-        # ### Obtain Data - Download and extract shapefiles
-        # The Block Group IDs in the Census data are associated with the Block Group boundaries that can be mapped.
-        # To map this data, we need the shapefile information for the block groups in the select counties.
-        #
-        # These files can be found online at:
-        # https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/
-
-        # ### Download and extract shapefiles
-        # Block group shapefiles are downloaded for each of the selected counties from
-        # the Census TIGER/Line Shapefiles at https://www2.census.gov/geo/tiger.
-        # Each counties file is downloaded as a zipfile and the contents are extracted.
-        # The shapefiles are reprojected to EPSG 4326 and appended as a single shapefile
-        # (as a GeoPandas GeoDataFrame) containing block groups for all of the selected counties.
-        #
-        # *EPSG: 4326 uses a coordinate system (Lat, Lon)
-        # This coordinate system is required for mapping with folium.
-
-        # loop through counties
-        appended_countyshp = []  # start an empty container for the county shapefiles
-        for state_county in state_counties:
-
-            # county_fips = state+county
-            filename = f'tl_2010_{state_county}_bg10'
-
-            # Use wget to download the TIGER Shapefile for a county
-            # options -quiet = turn off wget output
-            # add directory prefix to save files to folder named after program name
-            shapefile_url = 'https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/' + filename + '.zip'
-            print(('Downloading Shapefiles for State_County: '
-                   + state_county + ' from: '+shapefile_url).format(filename=filename))
-
-            zip_file = os.path.join(shapefile_dir, filename + '.zip')
-            urllib.request.urlretrieve(shapefile_url, zip_file)
-
-            with ZipFile(zip_file, 'r') as zip_obj:
-                zip_obj.extractall(path="shapefiletemp")
-            # Read shapefile to GeoDataFrame
-            gdf = gpd.read_file(f'shapefiletemp/{filename}.shp')
-
-            # Set projection to EPSG 4326, which is required for folium
-            gdf = gdf.to_crs(epsg=4326)
-
-            # Append county data
-            appended_countyshp.append(gdf)
+        appended_countyshp = CensusUtil.download_couty_shapefile(state_counties, shapefile_dir)
 
         # Create dataframe from appended county data
         shp_blockgroup = pd.concat(appended_countyshp)
@@ -351,3 +308,53 @@ class CensusUtil():
             raise Exception(error_msg)
 
         return cen_blockgroup[save_columns], bgmap
+
+    def download_couty_shapefile(state_county_list, download_dir):
+        # ### Obtain Data - Download and extract shapefiles
+        # The Block Group IDs in the Census data are associated with the Block Group boundaries that can be mapped.
+        # To map this data, we need the shapefile information for the block groups in the select counties.
+        #
+        # These files can be found online at:
+        # https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/
+
+        # ### Download and extract shapefiles
+        # Block group shapefiles are downloaded for each of the selected counties from
+        # the Census TIGER/Line Shapefiles at https://www2.census.gov/geo/tiger.
+        # Each counties file is downloaded as a zipfile and the contents are extracted.
+        # The shapefiles are reprojected to EPSG 4326 and appended as a single shapefile
+        # (as a GeoPandas GeoDataFrame) containing block groups for all of the selected counties.
+        #
+        # *EPSG: 4326 uses a coordinate system (Lat, Lon)
+        # This coordinate system is required for mapping with folium.
+
+        appended_countyshp = []  # start an empty container for the county shapefiles
+
+        # loop through counties
+        for state_county in state_county_list:
+
+            # county_fips = state+county
+            filename = f'tl_2010_{state_county}_bg10'
+
+            # Use wget to download the TIGER Shapefile for a county
+            # options -quiet = turn off wget output
+            # add directory prefix to save files to folder named after program name
+            shapefile_url = 'https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/' + filename + '.zip'
+            print(('Downloading Shapefiles for State_County: '
+                   + state_county + ' from: '+shapefile_url).format(filename=filename))
+
+            zip_file = os.path.join(download_dir, filename + '.zip')
+            urllib.request.urlretrieve(shapefile_url, zip_file)
+
+            with ZipFile(zip_file, 'r') as zip_obj:
+                zip_obj.extractall(path="shapefiletemp")
+
+            # Read shapefile to GeoDataFrame
+            gdf = gpd.read_file(f'shapefiletemp/{filename}.shp')
+
+            # Set projection to EPSG 4326, which is required for folium
+            gdf = gdf.to_crs(epsg=4326)
+
+            # Append county data
+            appended_countyshp.append(gdf)
+
+        return appended_countyshp
