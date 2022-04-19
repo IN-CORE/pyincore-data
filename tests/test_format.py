@@ -7,7 +7,7 @@
 import pycodestyle
 import os
 
-from pyincore_data.globals import PYINCORE_DATA_ROOT_FOLDER
+PYINCORE_DATA_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 
 paths = [
     os.path.join(PYINCORE_DATA_ROOT_FOLDER, 'pyincore_data'),
@@ -16,7 +16,7 @@ paths = [
 
 
 def test_conformance(paths=paths):
-    """Test that pyIncore conforms to PEP-8."""
+    """Test that pyIncore-data conforms to PEP-8."""
     style = pycodestyle.StyleGuide(quiet=False, max_line_length=120)
     result = style.check_files(paths)
     assert result.total_errors == 0
