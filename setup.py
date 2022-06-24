@@ -13,7 +13,7 @@ with open("README.rst", encoding="utf-8") as f:
 
 setup(
     name='pyincore-data',
-    version='0.4.1',
+    version='0.4.2',
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
     package_data={
