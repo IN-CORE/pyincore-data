@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.0] - 2022-06-29
 ### Changed
-- Refactored Census Util with genearlizating the methods. [#30](https://github.com/IN-CORE/pyincore-data/issues/30)
+- Refactored Census Util with generalizing the methods. [#30](https://github.com/IN-CORE/pyincore-data/issues/30)
 - Made pyincore build with legacy naming for pypi publish. [#31](https://github.com/IN-CORE/pyincore-data/issues/31)
 
 ## [0.4.1] - 2022-3-31
