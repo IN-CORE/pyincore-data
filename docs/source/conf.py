@@ -23,7 +23,6 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../pyincore_data'))
-# sys.path.insert(0, os.path.abspath('../../tests'))
 
 # -- Project information -----------------------------------------------------
 
@@ -31,9 +30,9 @@ project = 'pyIncore-data'
 author = 'Yong Wook Kim'
 
 # The short X.Y version
-version = '0.4'
+version = '0.5'
 # The full version, including alpha/beta/rc tags
-release = '0.4.1'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
