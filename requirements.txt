@@ -1,9 +1,7 @@
-Fiona>=1.8.13
-GDAL>=3.0.4
 numpy>=1.16.0
-pandas>=1.2.5
+pandas>=0.24.1
 folium>=0.11.0
-geopandas>=0.8.1
+geopandas>=0.6.1
 pytest>=3.9.0
-ipyleaflet>=0.13.4
+ipyleaflet>=0.13.4,<0.13.7
 branca>=0.3.1
