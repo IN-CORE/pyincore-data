@@ -5,8 +5,6 @@ channels:
   - in-core/label/rc
 dependencies:
   - python=3.8
-  - fiona>=1.8.13
-  - GDAL>=3.3.1
   - numpy>=1.16.0
   - folium>=0.11.0
   - pandas>=1.2.5
