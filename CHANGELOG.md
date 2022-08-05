@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+## Changed
+- Updated ipyleaflet and refactored. [#42](https://github.com/IN-CORE/pyincore-data/issues/42)
 ## [0.5.1] - 2022-07-27
 ### Changed
 - Updated conda library dependency. [#38](https://github.com/IN-CORE/pyincore-data/issues/38)
