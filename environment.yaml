@@ -11,5 +11,5 @@ dependencies:
   - pandas>=1.2.5
   - geopandas>=0.8.1
   - pytest>=3.9.0
-  - ipyleaflet>=0.13.4
+  - ipyleaflet>=0.16.0
   - branca>=0.3.1

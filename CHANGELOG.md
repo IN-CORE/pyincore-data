@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - GitHub action for building and publish the package to conda and pypi. [#44](https://github.com/IN-CORE/pyincore-data/issues/44)
 
+## Changed
+- Updated ipyleaflet and refactored. [#42](https://github.com/IN-CORE/pyincore-data/issues/42)
+
 ## [0.5.1] - 2022-07-27
 
 ### Changed
