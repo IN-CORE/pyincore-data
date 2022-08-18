@@ -1,6 +1,7 @@
-name: base
+name: pyincore_data
 channels:
   - conda-forge
+  - defaults
   - in-core
   - in-core/label/rc
 dependencies:
