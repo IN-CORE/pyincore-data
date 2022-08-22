@@ -13,7 +13,7 @@ with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name='pyincore-data',
+    name='pyincore_data',
     version=version,
     description='IN-CORE data python package',
     long_description=readme,
