@@ -10,6 +10,8 @@ import pandas as pd
 import geopandas as gpd
 import urllib.request
 import shutil
+import time
+from pyincore import Dataset
 from pyincore_data import globals
 from zipfile import ZipFile
 
@@ -38,7 +40,8 @@ class CensusUtil():
                 data_name (str): Optional for getting different dataset. e.g, 'component'
 
             Returns:
-                dict, object: A json list and a dataframe for census api result
+                dict, obj, obj: A json list, a dataframe for census api result,
+                    and pyincore dataset
 
         """
         # create census api data url
@@ -46,7 +49,16 @@ class CensusUtil():
 
         api_json, api_df = CensusUtil.request_census_api(data_url)
 
-        return api_json, api_df
+        # convert df to dataset
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        csv_name = 'api_' + str(timestr) + '.csv'
+        print('csv saved as ' + csv_name)
+        api_df.to_csv(csv_name)
+        out_dataset = Dataset.from_file(csv_name, data_type="ergo:censusdata")
+        out_dataset.format = "table"
+        out_dataset.metadata["format"] = "table"
+
+        return api_json, api_df, out_dataset
 
     @staticmethod
     def generate_census_api_url(state: str = None, county: str = None, year: str = None, data_source: str = None,
@@ -178,6 +190,7 @@ class CensusUtil():
     def get_blockgroupdata_for_dislocation(state_counties: list, vintage: str = "2010", dataset_name: str = 'dec/sf1',
                                            out_csv: bool = False, out_shapefile: bool = False,
                                            out_geopackage: bool = False, out_html: bool = False,
+                                           out_dataset: bool = True,
                                            geo_name: str = "geo_name", program_name: str = "program_name"):
 
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
@@ -195,8 +208,9 @@ class CensusUtil():
             program_name (str): Name of directory used to save output files.
 
         Returns:
-            obj, dict: A dataframe for dislocation analysis, and
-            a dictionary containing geodataframe and folium map
+            obj, dict, obj: A dataframe for dislocation analysis,
+            a dictionary containing geodataframe and folium map, and
+            a dataset object created by downloaded geo data
 
         """
         # Variable parameters
@@ -295,6 +309,14 @@ class CensusUtil():
         if out_geopackage:
             DataUtil.convert_dislocation_gpd_to_geopackage(cen_shp_blockgroup_merged, program_name, savefile)
 
+        if not out_shapefile:
+            DataUtil.convert_dislocation_gpd_to_shapefile(cen_shp_blockgroup_merged, program_name, savefile)
+
+        # convert df to dataset
+        out_dataset = Dataset.from_file(program_name+'/'+savefile+".shp", data_type="ergo:censusdata")
+        out_dataset.format = "shapefile"
+        out_dataset.metadata["format"] = "shapefile"
+
         # clean up shapefile temp directory
         # Try to remove tree; if failed show an error using try...except on screen
         try:
@@ -307,7 +329,7 @@ class CensusUtil():
             logger.error(error_msg)
             raise Exception(error_msg)
 
-        return cen_blockgroup[save_columns], bgmap
+        return cen_blockgroup[save_columns], bgmap, out_dataset
 
     def download_couty_shapefile(state_county_list, download_dir):
         # ### Obtain Data - Download and extract shapefiles
