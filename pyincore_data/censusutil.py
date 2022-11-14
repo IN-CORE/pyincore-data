@@ -190,7 +190,6 @@ class CensusUtil():
     def get_blockgroupdata_for_dislocation(state_counties: list, vintage: str = "2010", dataset_name: str = 'dec/sf1',
                                            out_csv: bool = False, out_shapefile: bool = False,
                                            out_geopackage: bool = False, out_html: bool = False,
-                                           out_dataset: bool = True,
                                            geo_name: str = "geo_name", program_name: str = "program_name"):
 
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
