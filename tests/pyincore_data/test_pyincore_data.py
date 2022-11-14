@@ -16,7 +16,7 @@ def client():
 
 def test_get_blockgroupdata_for_dislocation():
     state_counties = ['01001', '01003']
-    disloc_df, bgmap = CensusUtil.get_blockgroupdata_for_dislocation(state_counties)
+    disloc_df, bgmap, out_dataset = CensusUtil.get_blockgroupdata_for_dislocation(state_counties)
 
     assert disloc_df['Survey'][0] == '2010 dec/sf1'
 
