@@ -99,7 +99,7 @@ class CensusUtil():
         data_url = f'{base_url}?get={columns}'
         if county is None:  # only state is provided. There shouldn't be any geo_type
             data_url = f'{data_url}&for=state:{state}'
-        else:   # county has been provided and there could be geo_type or not
+        else:  # county has been provided and there could be geo_type or not
             if geo_type is None:
                 data_url = f'{data_url}&in=state:{state}&for=county:{county}'
             else:
@@ -238,8 +238,8 @@ class CensusUtil():
             # deconcatenate state and county values
             state = state_county[0:2]
             county = state_county[2:5]
-            logger.debug('State:  '+state)
-            logger.debug('County: '+county)
+            logger.debug('State:  ' + state)
+            logger.debug('County: ' + county)
 
             # Set up hyperlink for Census API
             api_hyperlink = CensusUtil.generate_census_api_url(
@@ -257,20 +257,20 @@ class CensusUtil():
         cen_blockgroup = pd.concat(appended_countydata, ignore_index=True)
 
         # Add variable named "Survey" that identifies Census survey program and survey year
-        cen_blockgroup['Survey'] = vintage+' '+dataset_name
+        cen_blockgroup['Survey'] = vintage + ' ' + dataset_name
 
         # Set block group FIPS code by concatenating state, county, tract and block group fips
-        cen_blockgroup['bgid'] = (cen_blockgroup['state']+cen_blockgroup['county'] +
-                                  cen_blockgroup['tract']+cen_blockgroup['block group'])
+        cen_blockgroup['bgid'] = (cen_blockgroup['state'] + cen_blockgroup['county'] +
+                                  cen_blockgroup['tract'] + cen_blockgroup['block group'])
 
         # To avoid problems with how the block group id is read saving it
         # as a string will reduce possibility for future errors
-        cen_blockgroup['bgidstr'] = cen_blockgroup['bgid'].apply(lambda x: "BG"+str(x).zfill(12))
+        cen_blockgroup['bgidstr'] = cen_blockgroup['bgid'].apply(lambda x: "BG" + str(x).zfill(12))
 
         # Convert variables from dtype object to integer
         for var in int_vars:
             cen_blockgroup[var] = cen_blockgroup[var].astype(int)
-            print(var+' converted from object to integer')
+            print(var + ' converted from object to integer')
 
         # Generate new variables
         cen_blockgroup['pwhitebg'] = cen_blockgroup['P005003'] / cen_blockgroup['P005001'] * 100
@@ -312,7 +312,7 @@ class CensusUtil():
             DataUtil.convert_dislocation_gpd_to_shapefile(cen_shp_blockgroup_merged, program_name, savefile)
 
         # convert df to dataset
-        out_dataset = Dataset.from_file(program_name+'/'+savefile+".shp", data_type="ergo:censusdata")
+        out_dataset = Dataset.from_file(program_name + '/' + savefile + ".shp", data_type="ergo:censusdata")
         out_dataset.format = "shapefile"
         out_dataset.metadata["format"] = "shapefile"
 
@@ -329,6 +329,158 @@ class CensusUtil():
             raise Exception(error_msg)
 
         return cen_blockgroup[save_columns], bgmap, out_dataset
+
+    @staticmethod
+    def demographic_factors(state_code, county_code, year, geo_type="tract:*"):
+
+        """Create Geopandas DataFrame for population demographics for a particular county from census dataset.
+
+                Args:
+                    state_code (int): state FIPS code.
+                    county_code (int): county FIPS code.
+                    year (str): Census Year.
+                    geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
+
+                Returns:
+                    obj: A dataframe  of population demographics for a particular county
+
+                """
+
+        df_1 = CensusUtil.get_census_data(state=state_code, county=county_code, year=year,
+                                          data_source="acs/acs5",
+                                          columns="GEO_ID,B03002_001E,B03002_003E",
+                                          geo_type=geo_type)[1]
+        df_1["factor_white_nonHispanic"] = df_1[["B03002_001E", "B03002_003E"]].astype(int).apply(
+            lambda row: row["B03002_003E"] / row["B03002_001E"], axis=1)
+
+        df_2 = CensusUtil.get_census_data(state=state_code, county=county_code, year=year,
+                                          data_source="acs/acs5",
+                                          columns="B25003_001E,B25003_002E",
+                                          geo_type=geo_type)[1]
+        df_2["factor_owner_occupied"] = df_2.astype(int).apply(lambda row: row["B25003_002E"] / row["B25003_001E"],
+                                                               axis=1)
+
+        df_3 = CensusUtil.get_census_data(state=state_code,
+                                          county=county_code,
+                                          year=year,
+                                          data_source="acs/acs5",
+                                          columns="B17021_001E,B17021_002E",
+                                          geo_type=geo_type)[1]
+        df_3["factor_earning_higher_than_national_poverty_rate"] = df_3.astype(int).apply(
+            lambda row: 1 - row["B17021_002E"] / row["B17021_001E"], axis=1)
+
+        df_4 = CensusUtil.get_census_data(state=state_code,
+                                          county=county_code,
+                                          year=year,
+                                          data_source="acs/acs5",
+                                          columns="B15003_001E,B15003_017E,B15003_018E,B15003_019E,B15003_020E,"
+                                                  "B15003_021E,B15003_022E,B15003_023E,B15003_024E,B15003_025E",
+                                          geo_type=geo_type)[1]
+        df_4["factor_over_25_with_high_school_diploma_or_higher"] = df_4.astype(int).apply(
+            lambda row: (row["B15003_017E"]
+                         + row["B15003_018E"]
+                         + row["B15003_019E"]
+                         + row["B15003_020E"]
+                         + row["B15003_021E"]
+                         + row["B15003_022E"]
+                         + row["B15003_023E"]
+                         + row["B15003_024E"]
+                         + row["B15003_025E"]) / row["B15003_001E"], axis=1)
+
+        if geo_type == 'tract:*':
+            df_5 = CensusUtil.get_census_data(state=state_code,
+                                              county=county_code,
+                                              year=year,
+                                              data_source="acs/acs5",
+                                              columns="B18101_001E,B18101_011E,B18101_014E,B18101_030E,B18101_033E",
+                                              geo_type=geo_type)[1]
+            df_5["factor_without_disability_age_18_to_65"] = df_5.astype(int).apply(
+                lambda row: (row["B18101_011E"] + row["B18101_014E"] + row["B18101_030E"] + row["B18101_033E"]) / row[
+                    "B18101_001E"], axis=1)
+
+        elif geo_type == 'block%20group:*':
+            df_5 = CensusUtil.get_census_data(state=state_code,
+                                              county=county_code,
+                                              year=year,
+                                              data_source="acs/acs5",
+                                              columns="B01003_001E,C21007_006E,C21007_009E,C21007_013E,C21007_016E",
+                                              geo_type=geo_type)[1]
+
+            df_5['factor_without_disability_age_18_to_65'] = \
+                df_5.astype(int).apply(lambda row: (row['C21007_006E']
+                                                    + row['C21007_006E'] + row['C21007_009E']
+                                                    + row['C21007_013E']) / row['C21007_016E'],
+                                       axis=1)
+
+        df_t = pd.concat([df_1[["GEO_ID", "factor_white_nonHispanic"]],
+                          df_2["factor_owner_occupied"],
+                          df_3["factor_earning_higher_than_national_poverty_rate"],
+                          df_4["factor_over_25_with_high_school_diploma_or_higher"],
+                          df_5["factor_without_disability_age_18_to_65"]],
+                         axis=1, join='inner')
+
+        # extract FIPS from geo id
+        df_t["FIPS"] = df_t.apply(lambda row: row["GEO_ID"].split("US")[1], axis=1)
+
+        return df_t
+
+    @staticmethod
+    def national_ave_values(year, data_source="acs/acs5"):
+        """Create Geopandas DataFrame for national population demographics from census dataset.
+
+                        Args:
+                            year (str): Census Year.
+                            data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
+
+                        Returns:
+                            list: A list of dictionaries denoting population demographics for the nation
+
+                        """
+
+        nav1 = CensusUtil.get_census_data(state="*", county=None, year=year, data_source=data_source,
+                                          columns="B03002_001E,B03002_003E", geo_type=None)[1]
+        nav1 = nav1.astype(int)
+        nav1_avg = {"feature": "NAV-1: White, nonHispanic",
+                    "average": nav1['B03002_003E'].sum() / nav1['B03002_001E'].sum()}
+
+        nav2 = CensusUtil.get_census_data(state="*", county=None, year=year, data_source=data_source,
+                                          columns="B25003_001E,B25003_002E", geo_type=None)[1]
+        nav2 = nav2.astype(int)
+        nav2_avg = {"feature": "NAV-2: Home Owners",
+                    "average": nav2['B25003_002E'].sum() / nav2['B25003_001E'].sum()}
+
+        nav3 = CensusUtil.get_census_data(state="*", county=None, year=year, data_source=data_source,
+                                          columns="B17021_001E,B17021_002E", geo_type=None)[1]
+        nav3 = nav3.astype(int)
+        nav3_avg = {"feature": "NAV-3: earning higher than national poverty rate",
+                    "average": 1 - nav3['B17021_002E'].sum() / nav3['B17021_001E'].sum()}
+
+        nav4 = CensusUtil.get_census_data(state="*",
+                                          county=None,
+                                          year=year,
+                                          data_source='acs/acs5',
+                                          columns='B15003_001E,B15003_017E,B15003_018E,B15003_019E,B15003_020E,'
+                                                  'B15003_021E,B15003_022E,B15003_023E,B15003_024E,B15003_025E',
+                                          geo_type=None)[1]
+        nav4 = nav4.astype(int)
+        nav4['temp'] = nav4.apply(lambda row: row['B15003_017E'] + row['B15003_018E'] + row['B15003_019E'] + row[
+            'B15003_020E'] + row['B15003_021E'] + row['B15003_022E'] + row['B15003_023E'] + row['B15003_024E'] + row[
+                                                  'B15003_025E'], axis=1)
+        nav4_avg = {"feature": 'NAV-4: over 25 with high school diploma or higher',
+                    "average": nav4['temp'].sum() / nav4['B15003_001E'].sum()}
+
+        nav5 = CensusUtil.get_census_data(state="*", county=None, year=year, data_source=data_source,
+                                          columns="B18101_001E,B18101_011E,B18101_014E,B18101_030E,B18101_033E",
+                                          geo_type=None)[1]
+        nav5 = nav5.astype(int)
+        nav5['temp'] = nav5.apply(
+            lambda row: row['B18101_011E'] + row['B18101_014E'] + row['B18101_030E'] + row['B18101_033E'], axis=1)
+        nav5_avg = {"feature": 'NAV-5: without disability age 18 to 65',
+                    "average": nav5["temp"].sum() / nav5["B18101_001E"].sum()}
+
+        navs = [nav1_avg, nav2_avg, nav3_avg, nav4_avg, nav5_avg]
+
+        return navs
 
     def download_couty_shapefile(state_county_list, download_dir):
         # ### Obtain Data - Download and extract shapefiles
@@ -352,7 +504,6 @@ class CensusUtil():
 
         # loop through counties
         for state_county in state_county_list:
-
             # county_fips = state+county
             filename = f'tl_2010_{state_county}_bg10'
 
@@ -361,7 +512,7 @@ class CensusUtil():
             # add directory prefix to save files to folder named after program name
             shapefile_url = 'https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/' + filename + '.zip'
             print(('Downloading Shapefiles for State_County: '
-                   + state_county + ' from: '+shapefile_url).format(filename=filename))
+                   + state_county + ' from: ' + shapefile_url).format(filename=filename))
 
             zip_file = os.path.join(download_dir, filename + '.zip')
             urllib.request.urlretrieve(shapefile_url, zip_file)
