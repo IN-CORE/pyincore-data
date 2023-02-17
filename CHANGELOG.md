@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Added CensusUtil functions to provide demographic data for county and nation from Housing Household Recovery 
+  notebook. [#269](https://github.com/IN-CORE/pyincore/issues/269)
+
 ### Changed
 - Made census util to provide dataset object. [#51](https://github.com/IN-CORE/pyincore-data/issues/51)
 
