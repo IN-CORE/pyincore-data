@@ -31,3 +31,20 @@ def test_get_fips_by_state_county():
     fips = CensusUtil.get_fips_by_state_county("illinois", "champaign")
 
     assert fips == '17019'
+
+
+def test_national_ave_values():
+    navs = CensusUtil.national_ave_values(year=2020)
+    assert navs[1]['average'] == 0.644373548235299
+
+def test_demographic_factors():
+    state = "texas"
+    county = "galveston"
+    year = 2020
+    fips = CensusUtil.get_fips_by_state_county(state=state, county=county)
+    state_code = fips[:2]
+    county_code = fips[2:]
+    geo_type = "block%20group:*"
+    social_vunlnerability_dem_factors_df = CensusUtil.demographic_factors(state_code=state_code, county_code=county_code,
+                                                                          year=year, geo_type=geo_type).dropna()
+    assert social_vunlnerability_dem_factors_df.loc[0]['GEO_ID'] == "1500000US481677243004"
