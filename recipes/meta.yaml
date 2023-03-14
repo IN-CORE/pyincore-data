@@ -1,5 +1,5 @@
 {% set name = "pyincore-data" %}
-{% set version = "0.5.2" %}
+{% set version = "0.6.0" %}
 
 package:
   name: {{ name|lower }}
@@ -32,6 +32,7 @@ requirements:
      
   run:
     - python>=3.6
+    - pyincore>=1.7.0
     - {{ pin_compatible('numpy') }}
     - folium>=0.11.0
     - pandas>=0.24.1
