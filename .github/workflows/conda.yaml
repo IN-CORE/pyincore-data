@@ -55,6 +55,7 @@ jobs:
           create-args: >-
             python=3.9
             conda
+          environment-file: environment.yaml
           generate-run-shell: true
           condarc: |
             channels:
