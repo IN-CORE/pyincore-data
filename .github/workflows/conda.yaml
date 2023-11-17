@@ -57,11 +57,6 @@ jobs:
             conda
           environment-file: environment.yaml
           generate-run-shell: true
-          condarc: |
-            channels:
-              - IN-CORE
-              - conda-forge
-              - defaults
 
       - name: Build conda package
         run: |
