@@ -34,7 +34,7 @@ jobs:
           miniconda-version: "latest"
           mamba-version: "*"
           use-mamba: true
-          python-version: 3.8
+          python-version: 3.9
           activate-environment: base
           environment-file: environment.yaml
           use-only-tar-bz2: true
