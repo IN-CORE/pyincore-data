@@ -60,6 +60,7 @@ jobs:
 
       - name: Build conda package
         run: |
+          conda install conda-build
           mkdir dist
           conda build --output-folder dist \
                       --label ${{ env.LABEL }} \
