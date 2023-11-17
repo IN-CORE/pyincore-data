@@ -28,16 +28,19 @@ jobs:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
             hashFiles('environment.yml') }}
 
-      - name: Install miniconda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install micromamba
+        uses: mamba-org/setup-micromamba@v1
         with:
-          miniconda-version: "latest"
-          mamba-version: "*"
-          use-mamba: true
-          python-version: 3.9
-          activate-environment: base
+          create-args: >-
+            python=3.9
+            conda
           environment-file: environment.yaml
-          use-only-tar-bz2: true
+          generate-run-shell: true
+          condarc: |
+            channels:
+              - IN-CORE
+              - conda-forge
+              - defaults
 
       - name: Run tests with pytest
         run: |
