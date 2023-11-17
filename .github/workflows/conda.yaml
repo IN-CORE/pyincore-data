@@ -57,6 +57,7 @@ jobs:
             conda
           environment-file: environment.yaml
           generate-run-shell: true
+          channels: conda-forge,in-core
 
       - name: Build conda package
         run: |
