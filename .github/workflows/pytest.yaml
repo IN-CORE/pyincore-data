@@ -36,13 +36,9 @@ jobs:
             conda
           environment-file: environment.yaml
           generate-run-shell: true
-          condarc: |
-            channels:
-              - IN-CORE
-              - conda-forge
-              - defaults
 
       - name: Run tests with pytest
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_data/.incorepw
-          $CONDA/bin/pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
+          python -m pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
+        shell: micromamba-shell {0}
