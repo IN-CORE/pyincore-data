@@ -40,12 +40,12 @@ In case of `conda`, the package management and deployment tool
 is called `anaconda`. Create the environment from the terminal at the project 
 folder (called `pyincore_data` here) and activate it:
     ```
-    conda create -n pyincore_data python=3.7
+    conda create -n pyincore_data python=3.9
     conda activate pyincore_data
     ```
     or  
     ```
-    virtualenv --python=python3.7 pyincore_data
+    virtualenv --python=python3.9 pyincore_data
     source venv/bin/activate
     ```
    

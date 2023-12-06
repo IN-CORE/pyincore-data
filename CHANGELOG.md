@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Clean dependencies [#65](https://github.com/IN-CORE/pyincore-data/issues/65)
+
 ## [0.6.0] - 2023-03-15
 
 ### Added
