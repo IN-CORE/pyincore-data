@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore-data
-version = '0.6.0'
+version = '0.6.1'
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
@@ -44,7 +44,7 @@ setup(
         '': ['*.ini']
     },
 
-    python_requires=">=3.6",
+    python_requires=">=3.9",
 
     install_requires=[line.strip() for line in open("requirements.txt").readlines()],
 
