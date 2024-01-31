@@ -10,11 +10,11 @@ from math import isnan
 import folium as fm
 import ipyleaflet as ipylft
 
-from ipyleaflet import projections
+# from ipyleaflet import projections
 from branca.colormap import linear
-from pyincore_data import globals
+from pyincore_data import globals as pyincore_globals
 
-logger = globals.LOGGER
+logger = pyincore_globals.LOGGER
 
 
 class CensusViz():
@@ -25,7 +25,7 @@ class CensusViz():
         """Create ipyleaflet layer for choropleth map.
 
         Args:
-            geo_data (object): ditionary from geodataframe
+            geo_data (object): dictionary from geodataframe
             choro_data (object): choropleth data from geodataframe
             name (str): name for the layer
 
@@ -66,11 +66,12 @@ class CensusViz():
 
     @staticmethod
     def create_choro_data_from_pd(pd, key):
-        """Create choropleth's choro-data from dataframe.
+        """Create choropleth choro-data from dataframe.
 
         Args:
             pd (object): an Input dataframe.
             key (str): a string for dictionary key
+
         Returns:
             obj : A dictionary of dataframe
 
@@ -139,10 +140,10 @@ class CensusViz():
         """Save folium dislocation map to html.
 
         Args:
-            in_gpd (object): Geodataframe of the dislocation.
+            folium_map (object): Folium map object.
+            programname (str): Name of the program.
+            savefile (str): Name of the file to save.
 
-        Returns:
-            obj : An ipyleaflet map for dislocation
         """
 
         # save html map
