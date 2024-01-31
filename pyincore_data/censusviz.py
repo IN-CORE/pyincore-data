@@ -10,7 +10,7 @@ from math import isnan
 import folium as fm
 import ipyleaflet as ipylft
 
-# from ipyleaflet import projections
+from ipyleaflet import projections
 from branca.colormap import linear
 from pyincore_data import globals as pyincore_globals
 
