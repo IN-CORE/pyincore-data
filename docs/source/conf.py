@@ -23,6 +23,7 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../pyincore_data'))
+sys.path.insert(0, os.path.abspath('../../tests'))
 
 # -- Project information -----------------------------------------------------
 
@@ -32,7 +33,7 @@ author = 'Yong Wook Kim'
 # The short X.Y version
 version = '0.6'
 # The full version, including alpha/beta/rc tags
-release = '0.6.1'
+release = '0.6.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -90,7 +91,7 @@ pygments_style = 'sphinx'
 # See also:
 # http://www.sphinx-doc.org/en/stable/ext/autodoc.html#confval-autodoc_mock_importshttps://github.com/sphinx-doc/sphinx/issues/4182
 
-autodoc_mock_imports = ['pytest', 'rasterstats']
+autodoc_mock_imports = ['pyincore_data', 'pytest', 'rasterstats', 'ipyleaflet']
 
 # This value selects what content will be inserted into the main body of an autoclass directive.
 # The possible values are:

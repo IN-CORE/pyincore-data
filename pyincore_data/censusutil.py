@@ -12,13 +12,13 @@ import urllib.request
 import shutil
 import time
 from pyincore import Dataset
-from pyincore_data import globals
 from zipfile import ZipFile
 
 from pyincore_data.censusviz import CensusViz
 from pyincore_data.utils.datautil import DataUtil
+from pyincore_data import globals as pyincore_globals
 
-logger = globals.LOGGER
+logger = pyincore_globals.LOGGER
 
 
 class CensusUtil():
@@ -139,6 +139,7 @@ class CensusUtil():
             Args:
                 state (str): State name. e.g, 'illinois'
                 county (str): County name. e.g, 'champaign'
+
             Returns:
                 str: A string of FIPS code
 
@@ -335,16 +336,16 @@ class CensusUtil():
 
         """Create Geopandas DataFrame for population demographics for a particular county from census dataset.
 
-                Args:
-                    state_code (int): state FIPS code.
-                    county_code (int): county FIPS code.
-                    year (str): Census Year.
-                    geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
+        Args:
+            state_code (int): state FIPS code.
+            county_code (int): county FIPS code.
+            year (str): Census Year.
+            geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
 
-                Returns:
-                    obj: A dataframe  of population demographics for a particular county
+        Returns:
+            obj: A dataframe  of population demographics for a particular county
 
-                """
+        """
 
         df_1 = CensusUtil.get_census_data(state=state_code, county=county_code, year=year,
                                           data_source="acs/acs5",
@@ -428,14 +429,14 @@ class CensusUtil():
     def national_ave_values(year, data_source="acs/acs5"):
         """Create Geopandas DataFrame for national population demographics from census dataset.
 
-                        Args:
-                            year (str): Census Year.
-                            data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
+        Args:
+            year (str): Census Year.
+            data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
 
-                        Returns:
-                            list: A list of dictionaries denoting population demographics for the nation
+        Returns:
+            list: A list of dictionaries denoting population demographics for the nation
 
-                        """
+        """
 
         nav1 = CensusUtil.get_census_data(state="*", county=None, year=year, data_source=data_source,
                                           columns="B03002_001E,B03002_003E", geo_type=None)[1]
@@ -482,7 +483,19 @@ class CensusUtil():
 
         return navs
 
+    @staticmethod
     def download_couty_shapefile(state_county_list, download_dir):
+        """Download and extract shapefiles for selected counties.
+
+        Args:
+            state_county_list (list): A list of concatenated State and County FIPS Codes.
+                see full list https://www.nrcs.usda.gov/wps/portal/nrcs/detail/national/home/?cid=nrcs143_013697
+            download_dir (str): Directory to save downloaded shapefiles.
+
+        Returns:
+            list: A list of GeoPandas GeoDataFrames containing block groups for all of the selected counties.
+
+        """
         # ### Obtain Data - Download and extract shapefiles
         # The Block Group IDs in the Census data are associated with the Block Group boundaries that can be mapped.
         # To map this data, we need the shapefile information for the block groups in the select counties.
@@ -495,7 +508,7 @@ class CensusUtil():
         # the Census TIGER/Line Shapefiles at https://www2.census.gov/geo/tiger.
         # Each counties file is downloaded as a zipfile and the contents are extracted.
         # The shapefiles are reprojected to EPSG 4326 and appended as a single shapefile
-        # (as a GeoPandas GeoDataFrame) containing block groups for all of the selected counties.
+        # (as a GeoPandas GeoDataFrame) containing block groups for all the selected counties.
         #
         # *EPSG: 4326 uses a coordinate system (Lat, Lon)
         # This coordinate system is required for mapping with folium.
