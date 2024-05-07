@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Google Analytics to the documentation. [#78](https:///github.com/IN-CORE/pyincore-data/issues/78)
+
 ## [0.6.2] - 2024-02-07
 
 ### Fixed
