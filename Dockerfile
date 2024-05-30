@@ -29,4 +29,4 @@ RUN python /src/docs/source/insert_ga_to_header.py
 FROM nginx
 
 COPY --from=builder /src/docs/build/ /usr/share/nginx/html/doc/pyincore_data/
-COPY config /usr/share/nginx/html/doc/pyincore_viz/config
+COPY config /usr/share/nginx/html/doc/pyincore_data/config
