@@ -17,7 +17,7 @@ from pyincore_data import globals as pyincore_globals
 logger = pyincore_globals.LOGGER
 
 
-class CensusViz():
+class CensusViz:
     """Utility methods for Census data and visualization"""
 
     @staticmethod
@@ -37,9 +37,9 @@ class CensusViz():
             geo_data=geo_data,
             choro_data=choro_data,
             colormap=linear.YlOrRd_04,
-            border_color='black',
-            style={'fillOpacity': 0.8},
-            name=name
+            border_color="black",
+            style={"fillOpacity": 0.8},
+            name=name,
         )
 
         return layer
@@ -59,8 +59,12 @@ class CensusViz():
         center_x = gpd.bounds.minx.mean()
         center_y = gpd.bounds.miny.mean()
 
-        out_map = ipylft.Map(center=(center_y, center_x), zoom=zoom_level,
-                             crs=projections.EPSG3857, scroll_wheel_zoom=True)
+        out_map = ipylft.Map(
+            center=(center_y, center_x),
+            zoom=zoom_level,
+            crs=projections.EPSG3857,
+            scroll_wheel_zoom=True,
+        )
 
         return out_map
 
@@ -79,8 +83,6 @@ class CensusViz():
         temp_id = list(range(len(pd[key])))
         temp_id = [str(i) for i in temp_id]
         choro_data = dict(zip(temp_id, pd[key]))
-        # check the minimum value to use it to nan value, since nan value makes an error.
-        min_val = pd[key].min()
         for item in choro_data:
             if isnan(choro_data[item]):
                 choro_data[item] = 0
@@ -108,30 +110,30 @@ class CensusViz():
         fm.Choropleth(
             geo_data=in_gpd,
             data=in_gpd,
-            columns=['GEOID10', 'phispbg'],
-            key_on='feature.properties.GEOID10',
-            fill_color='YlGnBu',
-            name='Percent Hispanic',
-            legend_name='Percent Hispanic (%)'
+            columns=["GEOID10", "phispbg"],
+            key_on="feature.properties.GEOID10",
+            fill_color="YlGnBu",
+            name="Percent Hispanic",
+            legend_name="Percent Hispanic (%)",
         ).add_to(out_folium_map)
 
         # Add Percent Black to Map
         fm.Choropleth(
             geo_data=in_gpd,
             data=in_gpd,
-            columns=['GEOID10', 'pblackbg'],
-            key_on='feature.properties.GEOID10',
-            fill_color='YlGnBu',
-            name='Percent Black',
-            legend_name='Percent Black (%)'
+            columns=["GEOID10", "pblackbg"],
+            key_on="feature.properties.GEOID10",
+            fill_color="YlGnBu",
+            name="Percent Black",
+            legend_name="Percent Black (%)",
         ).add_to(out_folium_map)
 
         fm.LayerControl().add_to(out_folium_map)
 
         # return geodataframe and map
         bgmap = {}  # start an empty dictionary
-        bgmap['gdf'] = in_gpd.copy()
-        bgmap['map'] = out_folium_map
+        bgmap["gdf"] = in_gpd.copy()
+        bgmap["map"] = out_folium_map
 
         return bgmap
 
@@ -147,8 +149,8 @@ class CensusViz():
         """
 
         # save html map
-        map_save_file = programname+'/'+savefile+'_map.html'
-        print('Dynamic HTML map saved to: '+map_save_file)
+        map_save_file = programname + "/" + savefile + "_map.html"
+        print("Dynamic HTML map saved to: " + map_save_file)
         folium_map.save(map_save_file)
 
     @staticmethod
@@ -166,28 +168,30 @@ class CensusViz():
         out_map = CensusViz.create_ipyleafletmap_from_geodataframe(in_gpd, zoom_level)
 
         # skim only the necessary field from the geodataframe
-        in_gpd_tmp = in_gpd[['GEOID10', 'phispbg', 'pblackbg', 'geometry']]
+        in_gpd_tmp = in_gpd[["GEOID10", "phispbg", "pblackbg", "geometry"]]
         geo_data_dic = json.loads(in_gpd_tmp.to_json())
-        hisp_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, 'phispbg')
-        black_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, 'pblackbg')
+        hisp_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, "phispbg")
+        black_choro_data = CensusViz.create_choro_data_from_pd(in_gpd, "pblackbg")
 
         # Add Percent Hispanic to Map
         layer1 = CensusViz.create_choropleth_layer(
-            geo_data_dic, hisp_choro_data, "phispbg")
+            geo_data_dic, hisp_choro_data, "phispbg"
+        )
 
         # Add Percent Black to Map
         layer2 = CensusViz.create_choropleth_layer(
-            geo_data_dic, black_choro_data, "pblackbg")
+            geo_data_dic, black_choro_data, "pblackbg"
+        )
 
         out_map.add_layer(layer1)
         out_map.add_layer(layer2)
 
-        out_map.add_control(ipylft.LayersControl(position='topright'))
-        out_map.add_control(ipylft.FullScreenControl(position='topright'))
+        out_map.add_control(ipylft.LayersControl(position="topright"))
+        out_map.add_control(ipylft.FullScreenControl(position="topright"))
 
         # return geodataframe and map
         bgmap = {}  # start an empty dictionary
-        bgmap['gdf'] = in_gpd.copy()
-        bgmap['map'] = out_map
+        bgmap["gdf"] = in_gpd.copy()
+        bgmap["map"] = out_map
 
         return bgmap
