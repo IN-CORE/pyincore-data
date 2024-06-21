@@ -43,3 +43,7 @@ To install **pyincore-data** package, run
 
    pip install pyincore-data
 
+
+**Prerequisite**
+
+* For developers, pre-install must be installed. If not, run `brew install pre-commit` or `pip install pre-commit`.
