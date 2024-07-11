@@ -7,22 +7,19 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore-data
-version = '0.6.3'
+version = "0.6.3"
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name='pyincore_data',
+    name="pyincore_data",
     version=version,
-    description='IN-CORE data python package',
+    description="IN-CORE data python package",
     long_description=readme,
-    long_description_content_type='text/x-rst',
-    
-    url='https://incore.ncsa.illinois.edu',
-
+    long_description_content_type="text/x-rst",
+    url="https://incore.ncsa.illinois.edu",
     license="Mozilla Public License v2.0",
-
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
@@ -30,26 +27,16 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Topic :: Scientific/Engineering"
+        "Topic :: Scientific/Engineering",
     ],
-
-    keywords=[
-        "data",
-        "census"
-    ],
-
+    keywords=["data", "census"],
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
-    package_data={
-        '': ['*.ini']
-    },
-
+    package_data={"": ["*.ini"]},
     python_requires=">=3.9",
-
     install_requires=[line.strip() for line in open("requirements.txt").readlines()],
-
     project_urls={
-        'Bug Reports': 'https://github.com/IN-CORE/pyincore-data/issues',
-        'Source': 'https://github.com/IN-CORE/pyincore-data',
+        "Bug Reports": "https://github.com/IN-CORE/pyincore-data/issues",
+        "Source": "https://github.com/IN-CORE/pyincore-data",
     },
 )

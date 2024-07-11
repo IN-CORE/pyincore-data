@@ -6,7 +6,6 @@
 
 
 class DataUtil:
-
     @staticmethod
     def convert_dislocation_gpd_to_shapefile(in_gpd, programname, savefile):
         """Create shapefile of dislocation geodataframe.
@@ -18,8 +17,8 @@ class DataUtil:
 
         """
         # save cen_shp_blockgroup_merged shapefile
-        print('Shapefile data file saved to: '+programname+'/'+savefile+".shp")
-        in_gpd.to_file(programname+'/'+savefile+".shp")
+        print("Shapefile data file saved to: " + programname + "/" + savefile + ".shp")
+        in_gpd.to_file(programname + "/" + savefile + ".shp")
 
     @staticmethod
     def convert_dislocation_gpd_to_geopackage(in_gpd, programname, savefile):
@@ -32,8 +31,10 @@ class DataUtil:
 
         """
         # save cen_shp_blockgroup_merged shapefile
-        print('GeoPackage data file saved to: '+programname+'/'+savefile+".gpkg")
-        in_gpd.to_file(programname+'/'+savefile+".gpkg", driver="GPKG")
+        print(
+            "GeoPackage data file saved to: " + programname + "/" + savefile + ".gpkg"
+        )
+        in_gpd.to_file(programname + "/" + savefile + ".gpkg", driver="GPKG")
 
     @staticmethod
     def convert_dislocation_pd_to_csv(in_pd, save_columns, programname, savefile):
@@ -48,5 +49,5 @@ class DataUtil:
         """
 
         # Save cen_blockgroup dataframe with save_column variables to csv named savefile
-        print('CSV data file saved to: '+programname+'/'+savefile+".csv")
-        in_pd[save_columns].to_csv(programname+'/'+savefile+".csv", index=False)
+        print("CSV data file saved to: " + programname + "/" + savefile + ".csv")
+        in_pd[save_columns].to_csv(programname + "/" + savefile + ".csv", index=False)
