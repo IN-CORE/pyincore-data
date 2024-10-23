@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Apply Black formatter [#83](https://github.com/IN-CORE/pyincore-data/issues/83)
 
+### Fixed
+- Fixed the pypi publish of the package [#87](https://github.com/IN-CORE/pyincore-data/issues/87)
+
 ## [0.6.3] - 2024-06-12
 
 ### Added
