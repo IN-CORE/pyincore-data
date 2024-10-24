@@ -10,8 +10,8 @@ import os
 PYINCORE_DATA_ROOT_FOLDER = os.path.dirname(os.path.dirname(__file__))
 
 paths = [
-    os.path.join(PYINCORE_DATA_ROOT_FOLDER, 'pyincore_data'),
-    os.path.join(PYINCORE_DATA_ROOT_FOLDER, 'tests/pyincore_data/'),
+    os.path.join(PYINCORE_DATA_ROOT_FOLDER, "pyincore_data"),
+    os.path.join(PYINCORE_DATA_ROOT_FOLDER, "tests/pyincore_data/"),
 ]
 
 
@@ -20,5 +20,6 @@ def test_conformance(paths=paths):
     style = pycodestyle.StyleGuide(quiet=False, max_line_length=120)
     result = style.check_files(paths)
     assert result.total_errors == 0
+
 
 test_conformance()

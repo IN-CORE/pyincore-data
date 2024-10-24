@@ -15,27 +15,29 @@ def client():
 
 
 def test_get_blockgroupdata_for_dislocation():
-    state_counties = ['01001', '01003']
-    disloc_df, bgmap, out_dataset = CensusUtil.get_blockgroupdata_for_dislocation(state_counties)
+    state_counties = ["01001", "01003"]
+    disloc_df, bgmap, out_dataset = CensusUtil.get_blockgroupdata_for_dislocation(
+        state_counties
+    )
 
-    assert disloc_df['Survey'][0] == '2010 dec/sf1'
+    assert disloc_df["Survey"][0] == "2010 dec/sf1"
 
 
 def test_get_fips_by_state():
     fips = CensusUtil.get_fips_by_state("illinois")
 
-    assert 'NAME' in fips[0]
+    assert "NAME" in fips[0]
 
 
 def test_get_fips_by_state_county():
     fips = CensusUtil.get_fips_by_state_county("illinois", "champaign")
 
-    assert fips == '17019'
+    assert fips == "17019"
 
 
 def test_national_ave_values():
     navs = CensusUtil.national_ave_values(year=2020)
-    assert navs[1]['average'] == 0.644373548235299
+    assert navs[1]["average"] == 0.644373548235299
 
 
 def test_demographic_factors():
@@ -46,7 +48,9 @@ def test_demographic_factors():
     state_code = fips[:2]
     county_code = fips[2:]
     geo_type = "block%20group:*"
-    social_vulnerability_dem_factors_df = CensusUtil.demographic_factors(state_code=state_code,
-                                                                         county_code=county_code, year=year,
-                                                                         geo_type=geo_type).dropna()
-    assert social_vulnerability_dem_factors_df.loc[0]['GEO_ID'] == "1500000US481677243004"
+    social_vulnerability_dem_factors_df = CensusUtil.demographic_factors(
+        state_code=state_code, county_code=county_code, year=year, geo_type=geo_type
+    ).dropna()
+    assert (
+        social_vulnerability_dem_factors_df.loc[0]["GEO_ID"] == "1500000US481677243004"
+    )
