@@ -7,7 +7,7 @@
 from setuptools import setup, find_packages
 
 # version number of pyincore-data
-version = "0.6.3"
+version = "0.7.0"
 
 with open("README.rst", encoding="utf-8") as f:
     readme = f.read()

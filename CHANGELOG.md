@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.7.0] - 2024-10-23
 
 ### Added
 - Apply Black formatter [#83](https://github.com/IN-CORE/pyincore-data/issues/83)
+
+### Fixed
+- Fixed the pypi publish of the package [#87](https://github.com/IN-CORE/pyincore-data/issues/87)
 
 ## [0.6.3] - 2024-06-12
 
