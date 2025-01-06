@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Documentation container tagging error by github action [#90](https://github.com/IN-CORE/pyincore/issues/90)
+
 ## [0.7.0] - 2024-10-23
 
 ### Added
