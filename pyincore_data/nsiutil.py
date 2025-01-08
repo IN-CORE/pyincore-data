@@ -9,22 +9,13 @@ import geopandas as gpd
 import requests
 
 from pyincore_data.utils.datautil import DataUtil
+from pyincore_data import globals as pyincore_globals
 
 # Static mapping of state names to FIPS codes (since the API doesn't directly return them in this case)
-STATE_FIPS_CODES = {
-    "Alabama": "01", "Alaska": "02", "Arizona": "04", "Arkansas": "05", "California": "06",
-    "Colorado": "08", "Connecticut": "09", "Delaware": "10", "Florida": "12", "Georgia": "13",
-    "Hawaii": "15", "Idaho": "16", "Illinois": "17", "Indiana": "18", "Iowa": "19",
-    "Kansas": "20", "Kentucky": "21", "Louisiana": "22", "Maine": "23", "Maryland": "24",
-    "Massachusetts": "25", "Michigan": "26", "Minnesota": "27", "Mississippi": "28", "Missouri": "29",
-    "Montana": "30", "Nebraska": "31", "Nevada": "32", "New Hampshire": "33", "New Jersey": "34",
-    "New Mexico": "35", "New York": "36", "North Carolina": "37", "North Dakota": "38", "Ohio": "39",
-    "Oklahoma": "40", "Oregon": "41", "Pennsylvania": "42", "Rhode Island": "44", "South Carolina": "45",
-    "South Dakota": "46", "Tennessee": "47", "Texas": "48", "Utah": "49", "Vermont": "50",
-    "Virginia": "51", "Washington": "53", "West Virginia": "54", "Wisconsin": "55", "Wyoming": "56"
-}
+STATE_FIPS_CODES = pyincore_globals.STATE_FIPS_CODES
 
-class NSI:
+
+class NsiUtil:
     @staticmethod
     def create_nsi_gdf_by_county_fips(in_fips):
         """
@@ -69,7 +60,7 @@ class NSI:
         return merged_gdf
 
     @staticmethod
-    def get_county_fips_list_by_state(state_name):
+    def get_county_fips_by_state(state_name):
         """
         Fetches all county FIPS codes for a given state using the US Census Bureau API.
 
@@ -123,10 +114,39 @@ class NSI:
             list: A list of FIPS codes (strings) for all counties in the state.
         """
         try:
-            counties = DataUtil.get_county_fips_by_state(state_name)
+            counties = NsiUtil.get_county_fips_by_state(state_name)
             fips_list = [county['fips'] for county in counties]
             return fips_list
         except ValueError as e:
             print("Error:", e)
             return []
 
+    @staticmethod
+    def get_fips_by_state_and_county(state_name, county_name):
+        """
+        Fetches the FIPS code for a specific county in a given state.
+
+        Args:
+            state_name (str): Full state name (e.g., "Illinois").
+            county_name (str): Full county name (e.g., "Champaign").
+
+        Returns:
+            str: The FIPS code for the specified county.
+            None: If the state or county is not found.
+        """
+        try:
+            # fetch all counties and their FIPS codes for the state
+            counties = NsiUtil.get_county_fips_by_state(state_name)
+
+            # find the county by name
+            for county in counties:
+                county_name_cleaned = county['county'].split(',')[0].replace(" County", "").strip().lower()
+                if county_name_cleaned == county_name.lower():
+                    return county['fips']
+
+            # if no match is found
+            print(f"County '{county_name}' not found in state '{state_name}'.")
+            return None
+        except ValueError as e:
+            print("Error:", e)
+            return None
