@@ -39,6 +39,14 @@ requirements:
     - geopandas>=0.14.0
     - ipyleaflet>=0.16.0
     - branca>=0.3.0
+    - sqlalchemy>=1.4.42
+    - geojson>=2.5.0
+    - python-dotenv>=0.19.0
+    - beautifulsoup4>=4.12.2
+    - pycodestyle>=2.10.0
+    - requests>=2.31.0
+    - setuptools>=65.5.0
+    - fiona>=1.9.5
  
 test:
   # Python imports
