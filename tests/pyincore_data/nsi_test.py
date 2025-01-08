@@ -28,6 +28,14 @@ def test_create_nsi_gdf_by_counties_fips_list():
     assert merged_gdf.shape[0] > 0
 
 
+def test_get_county_fips_by_state():
+    state = 'illinois'
+    fips_list = NSI.get_county_fips_by_state(state)
+
+    assert len(fips_list) > 0
+
+
 if __name__ == '__main__':
-    test_create_nsi_gdf_by_counties_fips_list()
-    test_create_nsi_gdf_by_county_fips()
+    # test_create_nsi_gdf_by_county_fips()
+    # test_create_nsi_gdf_by_counties_fips_list()
+    test_get_county_fips_by_state()
