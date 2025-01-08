@@ -48,11 +48,3 @@ def test_get_fips_by_state_and_county():
     fips = NsiUtil.get_fips_by_state_and_county(state, county)
 
     assert fips == '17019'
-
-
-if __name__ == '__main__':
-    # test_create_nsi_gdf_by_county_fips()
-    # test_create_nsi_gdf_by_counties_fips_list()
-    # test_get_county_fips_by_state()
-    test_get_county_fips_only_list_by_state()
-    test_get_fips_by_state_and_county()
