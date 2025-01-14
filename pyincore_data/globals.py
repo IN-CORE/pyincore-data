@@ -30,3 +30,5 @@ STATE_FIPS_CODES = {
     "South Dakota": "46", "Tennessee": "47", "Texas": "48", "Utah": "49", "Vermont": "50",
     "Virginia": "51", "Washington": "53", "West Virginia": "54", "Wisconsin": "55", "Wyoming": "56"
 }
+
+COUNTY_FIPS_BASE_URL = "https://api.census.gov/data/2020/acs/acs5"

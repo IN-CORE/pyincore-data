@@ -79,7 +79,7 @@ class NsiParser:
             raise ValueError(f"State '{state_name}' not found. Please check the spelling.")
 
         # Census API URL for county-level data
-        county_fips_url = f"https://api.census.gov/data/2020/acs/acs5?get=NAME&for=county:*&in=state:{state_fips}"
+        county_fips_url = f"{pyincore_globals.COUNTY_FIPS_BASE_URL}?get=NAME&for=county:*&in=state:{state_fips}"
         response = requests.get(county_fips_url)
 
         if response.status_code != 200:

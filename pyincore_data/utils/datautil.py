@@ -13,7 +13,7 @@ import sqlalchemy
 
 from sqlalchemy import create_engine
 from geojson import FeatureCollection
-from ..config import Config as cfg
+from pyincore_data.config import Config
 
 
 class DataUtil:
@@ -76,7 +76,7 @@ class DataUtil:
             gpd.GeoDataFrame: A GeoDataFrame containing the features with additional columns.
         """
         print("Requesting data for " + str(state_county_fips) + " from NSI endpoint")
-        json_url = cfg.NSI_URL_FIPS + str(state_county_fips)
+        json_url = Config.NSI_URL_FIPS + str(state_county_fips)
         result = requests.get(json_url)
         result.raise_for_status()
         result_json = result.json()
@@ -101,17 +101,22 @@ class DataUtil:
         Returns:
             None
         """
-        file_name = cfg.NSI_PREFIX + str(state_fips) + ".gpkg.zip"
-        file_url = "%s/%s" % (cfg.NSI_URL_STATE, file_name)
+        file_name = Config.NSI_PREFIX + str(state_fips) + ".gpkg.zip"
+        file_url = "%s/%s" % (Config.NSI_URL_STATE, file_name)
         print("Downloading NSI data for the state: " + str(state_fips))
         r = requests.get(file_url, stream=True)
 
-        download_filename = os.path.join("data", file_name)
+        if r is None or r.status_code != 200:
+            r.raise_for_status()
 
-        with open(download_filename, "wb") as zipfile:
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:
-                    zipfile.write(chunk)
+        else:
+            download_filename = os.path.join("data", file_name)
+
+            with open(download_filename, "wb") as zipfile:
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk:
+                        zipfile.write(chunk)
+                        print("Downloading NSI data for the state: " + str(state_fips))
 
     @staticmethod
     def read_geopkg_to_gdf(infile):
@@ -143,9 +148,7 @@ class DataUtil:
             gpd.GeoDataFrame: GeoDataFrame with a new 'guid' column.
         """
         print("Creating GUID column")
-        for i, row in gdf.iterrows():
-            guid_val = str(uuid.uuid4())
-            gdf.at[i, 'guid'] = guid_val
+        gdf['guid'] = [str(uuid.uuid4()) for _ in range(len(gdf))]
 
         return gdf
 
@@ -174,7 +177,7 @@ class DataUtil:
         return gdf
 
     @staticmethod
-    def df_to_geopkg(gdf, outfile):
+    def gdf_to_geopkg(gdf, outfile):
         """
         Saves a GeoDataFrame as a GeoPackage file.
 
@@ -189,7 +192,7 @@ class DataUtil:
         gdf.to_file(outfile, driver="GPKG")
 
     @staticmethod
-    def upload_postgres_from_gpk(infile):
+    def upload_postgres_from_gpkg(infile):
         """
         Reads data from a GeoPackage file and uploads it to a PostgreSQL database.
 
@@ -203,7 +206,7 @@ class DataUtil:
         for layername in fiona.listlayers(infile):
             gpkgpd = gpd.read_file(infile, layer=layername, crs='EPSG:4326')
 
-        NsiUtil.upload_postgres_gdf(gpkgpd)
+        DataUtil.upload_postgres_gdf(gpkgpd)
 
     @staticmethod
     def upload_postgres_gdf(gdf):
@@ -218,7 +221,7 @@ class DataUtil:
         """
         try:
             db_connection_url = "postgresql://%s:%s@%s:%s/%s" % \
-                                (cfg.DB_USERNAME, cfg.DB_PASSWORD, cfg.DB_URL, cfg.DB_PORT, cfg.DB_NAME)
+                                (Config.DB_USERNAME, Config.DB_PASSWORD, Config.DB_URL, Config.DB_PORT, Config.DB_NAME)
             con = create_engine(db_connection_url)
 
             print('Dropping ' + str(gdf.geometry.isna().sum()) + ' nulls.')
