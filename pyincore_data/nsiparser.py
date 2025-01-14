@@ -15,7 +15,7 @@ from pyincore_data import globals as pyincore_globals
 STATE_FIPS_CODES = pyincore_globals.STATE_FIPS_CODES
 
 
-class NsiUtil:
+class NsiParser:
     @staticmethod
     def create_nsi_gdf_by_county_fips(in_fips):
         """
@@ -114,7 +114,7 @@ class NsiUtil:
             list: A list of FIPS codes (strings) for all counties in the state.
         """
         try:
-            counties = NsiUtil.get_county_fips_by_state(state_name)
+            counties = NsiParser.get_county_fips_by_state(state_name)
             fips_list = [county['fips'] for county in counties]
             return fips_list
         except ValueError as e:
@@ -136,7 +136,7 @@ class NsiUtil:
         """
         try:
             # fetch all counties and their FIPS codes for the state
-            counties = NsiUtil.get_county_fips_by_state(state_name)
+            counties = NsiParser.get_county_fips_by_state(state_name)
 
             # find the county by name
             for county in counties:
