@@ -27,8 +27,6 @@ class NsiBuildingInventory:
         :param in_json:
         :return: geodataframe with building inventory data
         """
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        in_json = os.path.join(script_dir, 'nsi-seaside.json')
         gdf = gpd.read_file(in_json)
         gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, False, random=False)
         gdf.set_index('guid', inplace=True)
