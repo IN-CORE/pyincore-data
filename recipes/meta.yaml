@@ -62,10 +62,10 @@ test:
     # You can also put a file called run_test.py in the recipe that will be run at test time.
  
 about:
-  home: https://incore.ncsa.illinois.edu
+  home: https://tools.in-core.org
   license: MPL-2.0
   summary: 'Python library for data manipulation and handling of pyIncore'
   description: 'pyincore-data is a Python project that provides utilities for manipulating and handling for use with
   pyincore'
   dev_url: https://github.com/IN-CORE/pyincore-data
-  doc_url: https://incore.ncsa.illinois.edu/doc/incore
+  doc_url: https://tools.in-core.org/doc/incore
