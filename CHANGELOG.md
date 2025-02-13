@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Conda build to include package format argument [#97](https://github.com/IN-CORE/pyincore-data/issues/97)
+- Production URL update [#99](https://github.com/IN-CORE/pyincore-data/issues/99)
 
 ### Fixed
 - Documentation container tagging error by github action [#90](https://github.com/IN-CORE/pyincore-data/issues/90)
