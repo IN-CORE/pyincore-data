@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.8.0] - 2025-02-20
 
 ### Added
 - Utils for NSI data manipulation [#49](https://github.com/IN-CORE/pyincore-data/issues/49)

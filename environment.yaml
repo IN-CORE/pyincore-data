@@ -6,7 +6,7 @@ channels:
   - in-core/label/rc
 dependencies:
   - python=3.9
-  - pyincore>=1.8.0
+  - pyincore>=1.20.0
   - numpy>=1.26.0,<2.0a0
   - pandas>=2.1.2
   - folium>=0.11.0
@@ -14,7 +14,7 @@ dependencies:
   - ipyleaflet>=0.16.0
   - branca>=0.3.1
   - pytest>=3.9.0
-  - pyincore>=1.8.0
+  - pyincore>=1.20.0
   - ipyleaflet>=0.16.0
   - branca>=0.3.1
   - sqlalchemy>=1.4.42
