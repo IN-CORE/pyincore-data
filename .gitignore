@@ -73,3 +73,7 @@ original/
 
 # examples
 *examples
+tests/pyincore_data/shapefiles/
+
+# local test files
+tests/pyincore_data/nsi_tesy.py

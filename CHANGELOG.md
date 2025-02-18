@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.0] - 2025-02-20
+
+### Added
+- Utils for NSI data manipulation [#49](https://github.com/IN-CORE/pyincore-data/issues/49)
+- Methods for getting FIPS related information [#94](https://github.com/IN-CORE/pyincore-data/issues/94)
+
+### Changed
+- Conda build to include package format argument [#97](https://github.com/IN-CORE/pyincore-data/issues/97)
+- Production URL update [#99](https://github.com/IN-CORE/pyincore-data/issues/99)
+
+### Fixed
+- Documentation container tagging error by github action [#90](https://github.com/IN-CORE/pyincore-data/issues/90)
+
 ## [0.7.0] - 2024-10-23
 
 ### Added

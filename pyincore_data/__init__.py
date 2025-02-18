@@ -6,6 +6,7 @@
 
 from pyincore_data.censusutil import CensusUtil
 from pyincore_data.censusviz import CensusViz
+from pyincore_data.nsiparser import NsiParser
 from pyincore_data.utils.datautil import DataUtil
 
 import pyincore_data.globals

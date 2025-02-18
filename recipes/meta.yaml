@@ -1,5 +1,5 @@
 {% set name = "pyincore-data" %}
-{% set version = "0.7.0" %}
+{% set version = "0.8.0" %}
 
 package:
   name: {{ name|lower }}
@@ -32,13 +32,21 @@ requirements:
      
   run:
     - python>=3.9
-    - pyincore>=1.7.0
+    - pyincore>=1.20.0
     - {{ pin_compatible('numpy') }}
     - folium>=0.11.0
     - pandas>=2.1.2
     - geopandas>=0.14.0
     - ipyleaflet>=0.16.0
     - branca>=0.3.0
+    - sqlalchemy>=1.4.42
+    - geojson>=2.5.0
+    - python-dotenv>=0.19.0
+    - beautifulsoup4>=4.12.2
+    - pycodestyle>=2.10.0
+    - requests>=2.31.0
+    - setuptools>=65.5.0
+    - fiona>=1.9.5
  
 test:
   # Python imports
@@ -54,10 +62,10 @@ test:
     # You can also put a file called run_test.py in the recipe that will be run at test time.
  
 about:
-  home: https://incore.ncsa.illinois.edu
+  home: https://tools.in-core.org
   license: MPL-2.0
   summary: 'Python library for data manipulation and handling of pyIncore'
   description: 'pyincore-data is a Python project that provides utilities for manipulating and handling for use with
   pyincore'
   dev_url: https://github.com/IN-CORE/pyincore-data
-  doc_url: https://incore.ncsa.illinois.edu/doc/incore
+  doc_url: https://tools.in-core.org/doc/incore
