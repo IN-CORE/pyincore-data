@@ -10,25 +10,28 @@ class NsiBuildingInventory:
         """
         Convert NSI data to building inventory data by county FIPS list
 
-        :param fips_list: list of county FIPS codes
+        :param fips_list: list of county FIPS codes. The list should be string list not numeric
         :return: geodataframe with building inventory data
         """
         gdf = NsiParser.create_nsi_gdf_by_counties_fips_list(fips_list)
-        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, False, random=False)
+        region = NsiUtil.determine_region_by_fips(fips_list[0])
+        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
         gdf.set_index('guid', inplace=True)
 
         return gdf
 
     @staticmethod
-    def convert_nsi_to_building_inventory_from_geojson(in_json):
+    def convert_nsi_to_building_inventory_from_geojson(in_json, region="westCoast"):
         """
         Convert NSI data to building inventory data from GeoJSON file
 
         :param in_json:
+        :param region: region of the data, it should be either eastCoast, westCoast, or midWest
+
         :return: geodataframe with building inventory data
         """
         gdf = gpd.read_file(in_json)
-        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, False, random=False)
+        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
         gdf.set_index('guid', inplace=True)
 
         return gdf

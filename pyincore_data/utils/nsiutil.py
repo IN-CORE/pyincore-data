@@ -186,7 +186,7 @@ class NsiUtil:
         return gdf
 
     @staticmethod
-    def assign_hazus_specific_structure_type(gdf, sensitivity_analysis=False, random=False):
+    def assign_hazus_specific_structure_type(gdf, region, sensitivity_analysis=False, random=False):
         """
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
         Based on HAZUS 6.0 Inventory Technical Manual with some assumptions.
@@ -204,6 +204,7 @@ class NsiUtil:
 
         Inputs:
             - gdf: GeoDataFrame containing NSI data.
+            - region (str): The region name (WestCoast, MidWest, or EastCoast).
             - sensitivity_analysis (bool): If True, uses sensitivity analysis for structural type selection.
             - random (bool): If True, selects a building type randomly based on probability distribution;
                              otherwise, selects the type with the highest probability.
@@ -336,3 +337,34 @@ class NsiUtil:
             return "Moderate - Code"
         elif year_built >= 2003:
             return "High - Code"
+
+    def determine_region_by_fips(fips_code):
+        """
+        Determines the region (WestCoast, MidWest, or EastCoast) based on the FIPS code.
+
+        Parameters:
+            fips_code (str): The full FIPS code (e.g., "01213").
+
+        Returns:
+            str: The region name if found, otherwise "Unknown".
+        """
+        # find out the csv file
+        csv_path = os.path.join(os.path.dirname(__file__), "data", "nsi", "occ_bldg_mapping", "fips_region_mapping.csv")
+        # Extract the state FIPS code (first two digits)
+        state_fips = fips_code[:2]
+
+        # Load the CSV file
+        df = pd.read_csv(csv_path)
+
+        # Convert FIPS column to string for matching
+        df["FIPS"] = df["FIPS"].astype(str).str.zfill(2)
+
+        # Find the corresponding region
+        region = df.loc[df["FIPS"] == state_fips, "Group"].values
+
+        region = region[0] if len(region) > 0 else "Unknown"
+
+        # print out the region
+        print(region + "is used to generate building inventory")
+
+        return region
