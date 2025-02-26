@@ -5,22 +5,28 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class NsiUtil:
     @staticmethod
-    def read_occ_building_mapping():
+    def read_occ_building_mapping(region):
         """
-        Create mapping dictionary by reading tables of specific occupancy types to building type probabilities;
-        Tables A2-A10 in above HAZUS manual; these are west coast tables
+        Reads occupancy-to-building type mapping from CSV files based on the region.
 
-        :return: dictionary of occupancy to building type
+        :param region: Region name (WestCoast, MidWest, EastCoast, or Unknown)
+        :return: Dictionary mapping occupancy types to building types.
         """
-        # Get the directory of the mapping csv files
+        # Default to WestCoast if the region is unknown
+        if region not in ["WestCoast", "MidWest", "EastCoast"]:
+            logger.warning(f"Unknown region '{region}' detected. Defaulting to 'WestCoast'.")
+            region = "WestCoast"
+
+        # Get the directory based on the region
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_dir = os.path.join(script_dir, 'data', 'nsi', 'occ_bldg_mapping', 'westcoast')
+        csv_dir = os.path.join(script_dir, 'data', 'nsi', 'occ_bldg_mapping', region.lower())
 
-        o2b_dict = {}  # Occupancy to building dictionary
+        o2b_dict = {}  # Dictionary to store occupancy-to-building type mappings
 
         # Iterate over all CSV files in the directory
         for filename in os.listdir(csv_dir):
@@ -49,38 +55,20 @@ class NsiUtil:
     def assign_hazus_specific_structure_type(gdf, region, sensitivity_analysis=False, random=False):
         """
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
-        Based on HAZUS 6.0 Inventory Technical Manual with some assumptions.
-
-        Fallback Logic:
-        - If an exact match for the occupancy type is not found in the primary sheet,
-          the function applies a structured fallback mechanism.
-        - The fallback hierarchy ensures that:
-          - HighRise falls back to MidRise, then LowRise.
-          - MidRise falls back to LowRise.
-          - LowRise has no fallback.
-        - If the occupancy type is found in a fallback sheet, it is used instead, and a
-          warning is printed indicating the fallback action.
-        - If no valid data is found even after fallback attempts, the function assigns NaN values.
+        Adjusts logic based on the region (WestCoast, MidWest, EastCoast).
 
         Inputs:
             - gdf: GeoDataFrame containing NSI data.
-            - region (str): The region name (WestCoast, MidWest, or EastCoast).
-            - sensitivity_analysis (bool): If True, uses sensitivity analysis for structural type selection.
-            - random (bool): If True, selects a building type randomly based on probability distribution;
-                             otherwise, selects the type with the highest probability.
+            - region (str): The region name.
+            - sensitivity_analysis (bool): If True, applies sensitivity analysis.
+            - random (bool): If True, selects building type randomly based on probability distribution.
 
         Returns:
-            GeoDataFrame with added columns:
-                - guid: Unique identifier for each building.
-                - struct_typ: Assigned structural type.
-                - no_stories: Number of stories in the building.
-                - year_built: Year the building was built.
-                - dgn_lvl: Seismic design level.
-                - exactmatch: 'Yes' if an exact match was found, 'No' if a fallback was used.
+            GeoDataFrame with additional columns.
         """
         np.random.seed(1337)
 
-        o2b_dict = NsiUtil.read_occ_building_mapping()
+        o2b_dict = NsiUtil.read_occ_building_mapping(region)
 
         guid = []
         struct_typ = []
@@ -89,7 +77,7 @@ class NsiUtil:
         dgn_lvl = []
         exact_match = []
         fallback_count = 0
-        total_records = len(gdf)  # Total number of records
+        total_records = len(gdf)
 
         cnt_nan = 0
         for i, row in gdf.iterrows():
@@ -117,25 +105,31 @@ class NsiUtil:
                 exact_match.append(exact_match_flag)
                 continue
 
-            if no_stories_ <= 3:
-                sheet = 'LowRise-Pre1950' if year_built_ <= 1950 else (
-                    'LowRise-1950-1970' if year_built_ <= 1970 else 'LowRise-Post1970')
-                fallback_sheets = []
-            elif no_stories_ <= 7:
-                sheet = 'MidRise-Pre1950' if year_built_ <= 1950 else (
-                    'MidRise-1950-1970' if year_built_ <= 1970 else 'MidRise-Post1970')
+            # Assign sheets based on region
+            if region == "WestCoast":
+                if no_stories_ <= 3:
+                    sheet = 'LowRise-Pre1950' if year_built_ <= 1950 else (
+                        'LowRise-1950-1970' if year_built_ <= 1970 else 'LowRise-Post1970')
+                elif no_stories_ <= 7:
+                    sheet = 'MidRise-Pre1950' if year_built_ <= 1950 else (
+                        'MidRise-1950-1970' if year_built_ <= 1970 else 'MidRise-Post1970')
+                else:
+                    sheet = 'HighRise-Pre1950' if year_built_ <= 1950 else (
+                        'HighRise-1950-1970' if year_built_ <= 1970 else 'HighRise-Post1970')
+
                 fallback_sheets = [
-                    sheet.replace("MidRise", "LowRise"),
-                    sheet.replace("MidRise", "LowRise").replace("1950-1970", "Pre1950")
+                    sheet.replace("HighRise", "MidRise").replace("LowRise", "MidRise"),
+                    sheet.replace("HighRise", "LowRise").replace("MidRise", "LowRise")
                 ]
-            else:
-                sheet = 'HighRise-Pre1950' if year_built_ <= 1950 else (
-                    'HighRise-1950-1970' if year_built_ <= 1970 else 'HighRise-Post1970')
-                fallback_sheets = [
-                    sheet.replace("HighRise", "MidRise"),
-                    sheet.replace("HighRise", "LowRise"),
-                    sheet.replace("HighRise", "LowRise").replace("1950-1970", "Pre1950")
-                ]
+            else:  # MidWest & EastCoast only have 3 sheets
+                if no_stories_ <= 3:
+                    sheet = 'LowRise'
+                elif no_stories_ <= 7:
+                    sheet = 'MidRise'
+                else:
+                    sheet = 'HighRise'
+
+                fallback_sheets = ['MidRise', 'LowRise'] if sheet == 'HighRise' else ['LowRise']
 
             found_match = False
             for check_sheet in [sheet] + fallback_sheets:
@@ -150,6 +144,16 @@ class NsiUtil:
                         sheet = check_sheet
                         found_match = True
                         break
+
+            # **New Check: If still not found, check LowRise for MidWest & EastCoast**
+            if not found_match and region in ["MidWest", "EastCoast"]:
+                if 'LowRise' in o2b_dict and occ_type_ in o2b_dict['LowRise'].index:
+                    row = o2b_dict['LowRise'].loc[occ_type_].dropna()
+                    if not row.empty:
+                        logger.debug(f"Final fallback: '{occ_type_}' found in 'LowRise'")
+                        sheet = 'LowRise'
+                        fallback_count += 1
+                        found_match = True
 
             if not found_match:
                 logger.warning(f"'{occ_type_}' not found in any applicable sheet.")
@@ -176,7 +180,6 @@ class NsiUtil:
             dgn_lvl.append(NsiUtil.year_built_to_dgn_lvl(year_built_))
             exact_match.append(exact_match_flag)
 
-        # Calculate percentage of unmatched records
         unmatched_percentage = (fallback_count / total_records) * 100 if total_records > 0 else 0
 
         print(f"Total fallback occurrences: {fallback_count}")
@@ -231,6 +234,6 @@ class NsiUtil:
         region = region[0] if len(region) > 0 else "Unknown"
 
         # print out the region
-        print(region + "is used to generate building inventory")
+        print(region + " is used to generate building inventory")
 
         return region
