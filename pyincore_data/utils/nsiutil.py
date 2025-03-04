@@ -14,6 +14,10 @@ class NsiUtil:
         """
         Reads occupancy-to-building type mapping from CSV files based on the region.
 
+        Contributors
+        | Original Code and Logic: Dylan R. Sanderson
+        | Implementation: Yong Wook Kim
+
         :param region: Region name (WestCoast, MidWest, EastCoast, or Unknown)
         :return: Dictionary mapping occupancy types to building types.
         """
@@ -56,6 +60,10 @@ class NsiUtil:
         """
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
         Adjusts logic based on the region (WestCoast, MidWest, EastCoast).
+
+        Contributors
+        | Original Code and Logic: Dylan R. Sanderson
+        | Implementation: Yong Wook Kim
 
         Inputs:
             - gdf: GeoDataFrame containing NSI data.

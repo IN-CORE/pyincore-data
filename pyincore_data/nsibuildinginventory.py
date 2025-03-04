@@ -10,6 +10,10 @@ class NsiBuildingInventory:
         """
         Convert NSI data to building inventory data by county FIPS list
 
+        Contributors
+        | Original Code and Logic: Dylan R. Sanderson
+        | Implementation: Yong Wook Kim
+
         :param fips_list: list of county FIPS codes. The list should be string list not numeric
         :return: geodataframe with building inventory data
         """
@@ -24,6 +28,10 @@ class NsiBuildingInventory:
     def convert_nsi_to_building_inventory_from_geojson(in_json, region="westCoast"):
         """
         Convert NSI data to building inventory data from GeoJSON file
+
+        Contributors
+        | Original Code and Logic: Dylan R. Sanderson
+        | Implementation: Yong Wook Kim
 
         :param in_json:
         :param region: region of the data, it should be either eastCoast, westCoast, or midWest
