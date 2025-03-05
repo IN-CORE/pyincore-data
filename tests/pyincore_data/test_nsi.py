@@ -7,6 +7,8 @@
 import pytest
 
 from pyincore_data.nsiparser import NsiParser
+from pyincore_data.utils.nsiutil import NsiUtil
+from pyincore_data.nsibuildinginventory import NsiBuildingInventory
 
 
 @pytest.fixture
@@ -48,3 +50,25 @@ def test_get_fips_by_state_and_county():
     fips = NsiParser.get_fips_by_state_and_county(state, county)
 
     assert fips == '17019'
+
+
+def test_create_building_inventory_by_county_fips_list():
+    fips_list = ['36021']   # new york county
+    gdf = NsiBuildingInventory.convert_nsi_to_building_inventory_by_county_fips_list(fips_list)
+    assert gdf['struct_typ'].notna().all(), "struct_typ contains NaN values"
+    assert gdf['dgn_lvl'].notna().all(), "dgn_lvl contains NaN values"
+
+
+def test_create_building_inventory_by_geojson():
+    in_json = 'test1.json'
+    gdf = NsiBuildingInventory.convert_nsi_to_building_inventory_from_geojson(in_json, "westCoast")
+    assert gdf['struct_typ'].notna().all(), "struct_typ contains NaN values"
+    assert gdf['dgn_lvl'].notna().all(), "dgn_lvl contains NaN values"
+
+
+def test_define_region_by_fips():
+    fips = '15005'
+    region = NsiUtil.determine_region_by_fips(fips)
+    valid_regions = {"WestCoast", "MidWest", "EastCoast", "Unknown"}
+    assert region in valid_regions, f"Unexpected region returned: {region}"
+
