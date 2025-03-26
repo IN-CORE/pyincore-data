@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Midwest and Eastcoast building mapping for NSI building inventory process [#106](https://github.com/IN-CORE/pyincore-data/issues/106)
 - Conversion statistics in NSI building inventory process [#107](https://github.com/IN-CORE/pyincore-data/issues/107)
 - Automatic determination of the region by the fips code [#108](https://github.com/IN-CORE/pyincore-data/issues/108)
+- Geopackage support for NSI building inventory conversion [#117](https://github.com/IN-CORE/pyincore-data/issues/117)
 
 ## [0.8.0] - 2025-02-20
 

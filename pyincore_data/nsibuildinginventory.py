@@ -33,12 +33,33 @@ class NsiBuildingInventory:
         | Original Code and Logic: Dylan R. Sanderson
         | Implementation: Yong Wook Kim
 
-        :param in_json:
+        :param in_json: input GeoJSON file of the NSI data
         :param region: region of the data, it should be either eastCoast, westCoast, or midWest
 
         :return: geodataframe with building inventory data
         """
         gdf = gpd.read_file(in_json)
+        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
+        gdf.set_index('guid', inplace=True)
+
+        return gdf
+
+    @staticmethod
+    def convert_nsi_to_building_inventory_from_gpkg(in_gpkg, region="westCoast"):
+        """
+        Convert NSI data to building inventory data from GeoJSON file
+
+        Contributors
+        | Original Code and Logic: Dylan R. Sanderson
+        | Implementation: Yong Wook Kim
+
+        :param in_gpkg: Input GeoPackage file of the NSI data
+        :param region: region of the data, it should be either eastCoast, westCoast, or midWest
+
+        :return: geodataframe with building inventory data
+        """
+        # convert geopackage to geodataframe
+        gdf = gpd.read_file(in_gpkg)
         gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
         gdf.set_index('guid', inplace=True)
 
