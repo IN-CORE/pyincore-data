@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Automatic determination of the region by the fips code [#108](https://github.com/IN-CORE/pyincore-data/issues/108)
 - Geopackage support for NSI building inventory conversion [#117](https://github.com/IN-CORE/pyincore-data/issues/117)
 
+### Fixed
+- Certification error in github action's unit test [#119](https://github.com/IN-CORE/pyincore-data/issues/119)
+- Documentation docker container generation error in github action [#120](https://github.com/IN-CORE/pyincore-data/issues/120)
 ## [0.8.0] - 2025-02-20
 
 ### Added
