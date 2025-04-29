@@ -40,5 +40,12 @@ jobs:
       - name: Run tests with pytest
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_data/.incorepw
+
+          # Ensure certifi is installed and export cert location
+          micromamba install -y certifi
+          export SSL_CERT_FILE=$(python -m certifi)
+
+          # Run pytest
           python -m pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
         shell: micromamba-shell {0}
+
