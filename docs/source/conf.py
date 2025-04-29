@@ -134,7 +134,7 @@ html_theme_options = {
     "titles_only": False,
 }
 
-html_style = "css/theme.css"
+html_style = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
