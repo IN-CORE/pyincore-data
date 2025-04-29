@@ -22,7 +22,7 @@ class NsiUtil:
         :return: Dictionary mapping occupancy types to building types.
         """
         # Default to WestCoast if the region is unknown
-        if region not in ["WestCoast", "MidWest", "EastCoast"]:
+        if region.lower() not in ["westcoast", "midwest", "eastcoast"]:
             logger.warning(f"Unknown region '{region}' detected. Defaulting to 'WestCoast'.")
             region = "WestCoast"
 
@@ -114,7 +114,7 @@ class NsiUtil:
                 continue
 
             # Assign sheets based on region
-            if region == "WestCoast":
+            if region.lower() == "westcoast":
                 if no_stories_ <= 3:
                     sheet = 'LowRise-Pre1950' if year_built_ <= 1950 else (
                         'LowRise-1950-1970' if year_built_ <= 1970 else 'LowRise-Post1970')
@@ -154,7 +154,7 @@ class NsiUtil:
                         break
 
             # **New Check: If still not found, check LowRise for MidWest & EastCoast**
-            if not found_match and region in ["MidWest", "EastCoast"]:
+            if not found_match and region.lower() in ["midwest", "eastcoast"]:
                 if 'LowRise' in o2b_dict and occ_type_ in o2b_dict['LowRise'].index:
                     row = o2b_dict['LowRise'].loc[occ_type_].dropna()
                     if not row.empty:
