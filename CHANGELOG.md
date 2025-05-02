@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
+
 ### Added
 - Conversion of NSI data to IN-CORE building inventory data for Earthquake and Tsunami [#96](https://github.com/IN-CORE/pyincore-data/issues/96)
 - Midwest and Eastcoast building mapping for NSI building inventory process [#106](https://github.com/IN-CORE/pyincore-data/issues/106)
 - Conversion statistics in NSI building inventory process [#107](https://github.com/IN-CORE/pyincore-data/issues/107)
 - Automatic determination of the region by the fips code [#108](https://github.com/IN-CORE/pyincore-data/issues/108)
 - Geopackage support for NSI building inventory conversion [#117](https://github.com/IN-CORE/pyincore-data/issues/117)
+- GitHub action to check linting [#122](https://github.com/IN-CORE/pyincore-data/issues/122)
 
 ### Fixed
 - Certification error in github action's unit test [#119](https://github.com/IN-CORE/pyincore-data/issues/119)
