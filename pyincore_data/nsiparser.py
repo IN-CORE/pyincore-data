@@ -51,7 +51,9 @@ class NsiParser:
             gdf = DataUtil.get_features_by_fips(fips)
 
             if gdf is not None and not gdf.empty:
-                merged_gdf = gpd.GeoDataFrame(pd.concat([merged_gdf, gdf], ignore_index=True))
+                merged_gdf = gpd.GeoDataFrame(
+                    pd.concat([merged_gdf, gdf], ignore_index=True)
+                )
 
         # ensure CRS consistency in the merged GeoDataFrame
         if not merged_gdf.empty:
@@ -76,14 +78,18 @@ class NsiParser:
         # Validate the state name and get the state FIPS code
         state_fips = STATE_FIPS_CODES.get(state_name_normalized)
         if not state_fips:
-            raise ValueError(f"State '{state_name}' not found. Please check the spelling.")
+            raise ValueError(
+                f"State '{state_name}' not found. Please check the spelling."
+            )
 
         # Census API URL for county-level data
         county_fips_url = f"{pyincore_globals.COUNTY_FIPS_BASE_URL}?get=NAME&for=county:*&in=state:{state_fips}"
         response = requests.get(county_fips_url)
 
         if response.status_code != 200:
-            raise ValueError(f"Error fetching counties for state '{state_name}': {response.status_code}")
+            raise ValueError(
+                f"Error fetching counties for state '{state_name}': {response.status_code}"
+            )
 
         try:
             counties_data = response.json()
@@ -115,7 +121,7 @@ class NsiParser:
         """
         try:
             counties = NsiParser.get_county_fips_by_state(state_name)
-            fips_list = [county['fips'] for county in counties]
+            fips_list = [county["fips"] for county in counties]
             return fips_list
         except ValueError as e:
             print("Error:", e)
@@ -140,9 +146,15 @@ class NsiParser:
 
             # find the county by name
             for county in counties:
-                county_name_cleaned = county['county'].split(',')[0].replace(" County", "").strip().lower()
+                county_name_cleaned = (
+                    county["county"]
+                    .split(",")[0]
+                    .replace(" County", "")
+                    .strip()
+                    .lower()
+                )
                 if county_name_cleaned == county_name.lower():
-                    return county['fips']
+                    return county["fips"]
 
             # if no match is found
             print(f"County '{county_name}' not found in state '{state_name}'.")
