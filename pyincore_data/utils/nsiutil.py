@@ -23,31 +23,39 @@ class NsiUtil:
         """
         # Default to WestCoast if the region is unknown
         if region.lower() not in ["westcoast", "midwest", "eastcoast"]:
-            logger.warning(f"Unknown region '{region}' detected. Defaulting to 'WestCoast'.")
+            logger.warning(
+                f"Unknown region '{region}' detected. Defaulting to 'WestCoast'."
+            )
             region = "WestCoast"
 
         # Get the directory based on the region
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_dir = os.path.join(script_dir, 'data', 'nsi', 'occ_bldg_mapping', region.lower())
+        csv_dir = os.path.join(
+            script_dir, "data", "nsi", "occ_bldg_mapping", region.lower()
+        )
 
         o2b_dict = {}  # Dictionary to store occupancy-to-building type mappings
 
         # Iterate over all CSV files in the directory
         for filename in os.listdir(csv_dir):
             if filename.endswith(".csv"):
-                sheet_name = filename.replace(".csv", "")  # Extract the original sheet name
+                sheet_name = filename.replace(
+                    ".csv", ""
+                )  # Extract the original sheet name
                 file_path = os.path.join(csv_dir, filename)
 
                 # Read CSV file
                 df = pd.read_csv(file_path)
 
                 # Clean 'OccClass' column
-                df['OccClass'] = df['OccClass'].apply(lambda x: str(x).replace(u'\xa0', u''))
-                df.set_index('OccClass', inplace=True)
+                df["OccClass"] = df["OccClass"].apply(
+                    lambda x: str(x).replace("\xa0", "")
+                )
+                df.set_index("OccClass", inplace=True)
 
                 # Clean column names
                 old_cols = list(df.columns)
-                new_cols = [str(x).replace(u'\xa0', u'') for x in old_cols]
+                new_cols = [str(x).replace("\xa0", "") for x in old_cols]
                 rename_dict = dict(zip(old_cols, new_cols))
                 df.rename(columns=rename_dict, inplace=True)
 
@@ -56,7 +64,9 @@ class NsiUtil:
         return o2b_dict
 
     @staticmethod
-    def assign_hazus_specific_structure_type(gdf, region, sensitivity_analysis=False, random=False):
+    def assign_hazus_specific_structure_type(
+        gdf, region, sensitivity_analysis=False, random=False
+    ):
         """
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
         Adjusts logic based on the region (WestCoast, MidWest, EastCoast).
@@ -90,22 +100,22 @@ class NsiUtil:
         cnt_nan = 0
         for i, row in gdf.iterrows():
             guid.append(str(uuid.uuid4()))
-            year_built_ = row['med_yr_blt']
-            no_stories_ = row['num_story']
-            occ_type_ = row['occtype'].split('-')[0]
+            year_built_ = row["med_yr_blt"]
+            no_stories_ = row["num_story"]
+            occ_type_ = row["occtype"].split("-")[0]
             exact_match_flag = "Yes"
 
             if "RES3" in occ_type_:
                 occ_type_ = "RES3"
 
-            if occ_type_ == 'RES1':
+            if occ_type_ == "RES1":
                 struct_typ.append("W1")
                 no_stories.append(no_stories_)
                 year_built.append(year_built_)
                 dgn_lvl.append(NsiUtil.year_built_to_dgn_lvl(year_built_))
                 exact_match.append(exact_match_flag)
                 continue
-            if occ_type_ == 'RES2':
+            if occ_type_ == "RES2":
                 struct_typ.append("MH")
                 no_stories.append(no_stories_)
                 year_built.append(year_built_)
@@ -116,28 +126,51 @@ class NsiUtil:
             # Assign sheets based on region
             if region.lower() == "westcoast":
                 if no_stories_ <= 3:
-                    sheet = 'LowRise-Pre1950' if year_built_ <= 1950 else (
-                        'LowRise-1950-1970' if year_built_ <= 1970 else 'LowRise-Post1970')
+                    sheet = (
+                        "LowRise-Pre1950"
+                        if year_built_ <= 1950
+                        else (
+                            "LowRise-1950-1970"
+                            if year_built_ <= 1970
+                            else "LowRise-Post1970"
+                        )
+                    )
                 elif no_stories_ <= 7:
-                    sheet = 'MidRise-Pre1950' if year_built_ <= 1950 else (
-                        'MidRise-1950-1970' if year_built_ <= 1970 else 'MidRise-Post1970')
+                    sheet = (
+                        "MidRise-Pre1950"
+                        if year_built_ <= 1950
+                        else (
+                            "MidRise-1950-1970"
+                            if year_built_ <= 1970
+                            else "MidRise-Post1970"
+                        )
+                    )
                 else:
-                    sheet = 'HighRise-Pre1950' if year_built_ <= 1950 else (
-                        'HighRise-1950-1970' if year_built_ <= 1970 else 'HighRise-Post1970')
+                    sheet = (
+                        "HighRise-Pre1950"
+                        if year_built_ <= 1950
+                        else (
+                            "HighRise-1950-1970"
+                            if year_built_ <= 1970
+                            else "HighRise-Post1970"
+                        )
+                    )
 
                 fallback_sheets = [
                     sheet.replace("HighRise", "MidRise").replace("LowRise", "MidRise"),
-                    sheet.replace("HighRise", "LowRise").replace("MidRise", "LowRise")
+                    sheet.replace("HighRise", "LowRise").replace("MidRise", "LowRise"),
                 ]
             else:  # MidWest & EastCoast only have 3 sheets
                 if no_stories_ <= 3:
-                    sheet = 'LowRise'
+                    sheet = "LowRise"
                 elif no_stories_ <= 7:
-                    sheet = 'MidRise'
+                    sheet = "MidRise"
                 else:
-                    sheet = 'HighRise'
+                    sheet = "HighRise"
 
-                fallback_sheets = ['MidRise', 'LowRise'] if sheet == 'HighRise' else ['LowRise']
+                fallback_sheets = (
+                    ["MidRise", "LowRise"] if sheet == "HighRise" else ["LowRise"]
+                )
 
             found_match = False
             for check_sheet in [sheet] + fallback_sheets:
@@ -147,7 +180,9 @@ class NsiUtil:
                         if check_sheet != sheet:
                             logger.debug(f"'{occ_type_}' not found in sheet '{sheet}'")
                             exact_match_flag = "No"
-                            logger.debug(f"Applying fallback: '{occ_type_}' found in '{check_sheet}' instead.")
+                            logger.debug(
+                                f"Applying fallback: '{occ_type_}' found in '{check_sheet}' instead."
+                            )
                             fallback_count += 1
                         sheet = check_sheet
                         found_match = True
@@ -155,11 +190,13 @@ class NsiUtil:
 
             # **New Check: If still not found, check LowRise for MidWest & EastCoast**
             if not found_match and region.lower() in ["midwest", "eastcoast"]:
-                if 'LowRise' in o2b_dict and occ_type_ in o2b_dict['LowRise'].index:
-                    row = o2b_dict['LowRise'].loc[occ_type_].dropna()
+                if "LowRise" in o2b_dict and occ_type_ in o2b_dict["LowRise"].index:
+                    row = o2b_dict["LowRise"].loc[occ_type_].dropna()
                     if not row.empty:
-                        logger.debug(f"Final fallback: '{occ_type_}' found in 'LowRise'")
-                        sheet = 'LowRise'
+                        logger.debug(
+                            f"Final fallback: '{occ_type_}' found in 'LowRise'"
+                        )
+                        sheet = "LowRise"
                         fallback_count += 1
                         found_match = True
 
@@ -177,30 +214,37 @@ class NsiUtil:
             struct_type_probs = row.values / 100
 
             if len(struct_type_probs) == 0:
-                logger.warning(f"Warning: No valid probabilities for '{occ_type_}' in sheet '{sheet}'")
+                logger.warning(
+                    f"Warning: No valid probabilities for '{occ_type_}' in sheet '{sheet}'"
+                )
                 struct_typ.append(np.nan)
             else:
-                struct_typ.append(np.random.choice(struct_types, p=struct_type_probs) if random else struct_types[
-                    np.argmax(struct_type_probs)])
+                struct_typ.append(
+                    np.random.choice(struct_types, p=struct_type_probs)
+                    if random
+                    else struct_types[np.argmax(struct_type_probs)]
+                )
 
             no_stories.append(no_stories_)
             year_built.append(year_built_)
             dgn_lvl.append(NsiUtil.year_built_to_dgn_lvl(year_built_))
             exact_match.append(exact_match_flag)
 
-        unmatched_percentage = (fallback_count / total_records) * 100 if total_records > 0 else 0
+        unmatched_percentage = (
+            (fallback_count / total_records) * 100 if total_records > 0 else 0
+        )
 
         print(f"Total fallback occurrences: {fallback_count}")
         print(f"Total number of records: {total_records}")
         print(f"Percentage of unmatched records: {unmatched_percentage:.2f}%")
         print(f"Total empty rows: {cnt_nan}")
 
-        gdf['guid'] = guid
-        gdf['struct_typ'] = struct_typ
-        gdf['no_stories'] = no_stories
-        gdf['year_built'] = year_built
-        gdf['dgn_lvl'] = dgn_lvl
-        gdf['exact_match'] = exact_match
+        gdf["guid"] = guid
+        gdf["struct_typ"] = struct_typ
+        gdf["no_stories"] = no_stories
+        gdf["year_built"] = year_built
+        gdf["dgn_lvl"] = dgn_lvl
+        gdf["exact_match"] = exact_match
 
         return gdf
 
@@ -226,7 +270,13 @@ class NsiUtil:
             str: The region name if found, otherwise "Unknown".
         """
         # find out the csv file
-        csv_path = os.path.join(os.path.dirname(__file__), "data", "nsi", "occ_bldg_mapping", "fips_region_mapping.csv")
+        csv_path = os.path.join(
+            os.path.dirname(__file__),
+            "data",
+            "nsi",
+            "occ_bldg_mapping",
+            "fips_region_mapping.csv",
+        )
         # Extract the state FIPS code (first two digits)
         state_fips = fips_code[:2]
 

@@ -1,4 +1,3 @@
-import os
 import geopandas as gpd
 from pyincore_data.nsiparser import NsiParser
 from pyincore_data.utils.nsiutil import NsiUtil
@@ -19,8 +18,10 @@ class NsiBuildingInventory:
         """
         gdf = NsiParser.create_nsi_gdf_by_counties_fips_list(fips_list)
         region = NsiUtil.determine_region_by_fips(fips_list[0])
-        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
-        gdf.set_index('guid', inplace=True)
+        gdf = NsiUtil.assign_hazus_specific_structure_type(
+            gdf, region, False, random=False
+        )
+        gdf.set_index("guid", inplace=True)
 
         return gdf
 
@@ -39,8 +40,10 @@ class NsiBuildingInventory:
         :return: geodataframe with building inventory data
         """
         gdf = gpd.read_file(in_json)
-        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
-        gdf.set_index('guid', inplace=True)
+        gdf = NsiUtil.assign_hazus_specific_structure_type(
+            gdf, region, False, random=False
+        )
+        gdf.set_index("guid", inplace=True)
 
         return gdf
 
@@ -60,7 +63,9 @@ class NsiBuildingInventory:
         """
         # convert geopackage to geodataframe
         gdf = gpd.read_file(in_gpkg)
-        gdf = NsiUtil.assign_hazus_specific_structure_type(gdf, region, False, random=False)
-        gdf.set_index('guid', inplace=True)
+        gdf = NsiUtil.assign_hazus_specific_structure_type(
+            gdf, region, False, random=False
+        )
+        gdf.set_index("guid", inplace=True)
 
         return gdf
