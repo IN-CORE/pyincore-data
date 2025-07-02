@@ -89,6 +89,8 @@ class NsiUtil:
         o2b_dict = NsiUtil.read_occ_building_mapping(region)
 
         guid = []
+        f_arch = []
+        w_arch = []
         struct_typ = []
         no_stories = []
         year_built = []
@@ -97,13 +99,110 @@ class NsiUtil:
         fallback_count = 0
         total_records = len(gdf)
 
+        # Hurricane RES archetypes
+        RES_TYPES = ["RES1-1SNB", "RES1-1SWB", "RES1-2SNB", "RES1-2SWB", "RES1-3SNB", "RES1-3SWB", "RES1-SLNB",
+                     "RES1-SLWB", "RES2", "RES3A", "RES3B", "RES3C", "RES3D", "RES3E", "RES3F", "RES4", "RES5", "RES6"]
+
         cnt_nan = 0
         for i, row in gdf.iterrows():
             guid.append(str(uuid.uuid4()))
             year_built_ = row["med_yr_blt"]
             no_stories_ = row["num_story"]
+
+            full_occ_type_ = row["occtype"]
             occ_type_ = row["occtype"].split("-")[0]
+
+            area_sqft = row["sqft"]
+            # print(type(area_sqft))
+
             exact_match_flag = "Yes"
+            found_type_ = row["found_type"]
+
+            if full_occ_type_ == "AGR1":
+                f_arch.append("F15")
+                w_arch.append("T16")
+            elif full_occ_type_ == "COM1":
+                f_arch.append("F8")
+                w_arch.append("T18")
+            elif full_occ_type_ == "COM10":
+                f_arch.append("F8")
+                w_arch.append("T6")
+            elif full_occ_type_ == "COM2":
+                f_arch.append("F6")
+                w_arch.append("T15")
+            elif full_occ_type_ == "COM3":
+                f_arch.append("F5")
+                w_arch.append("T6")
+            elif full_occ_type_ == "COM4":
+                f_arch.append("F8")
+                w_arch.append("T18")
+            elif full_occ_type_ == "COM10":
+                # This is a duplicate in his code, need to ask about it
+                f_arch.append("F5")
+                w_arch.append("T6")
+            elif full_occ_type_ == "COM5":
+                f_arch.append("F7")
+                w_arch.append("T6")
+            elif full_occ_type_ == "COM6" or full_occ_type_ == "COM7":
+                f_arch.append("F12")
+                w_arch.append("T12")
+            elif full_occ_type_ == "COM8" or full_occ_type_ == "COM9":
+                f_arch.append("F6")
+                w_arch.append("T6")
+            elif full_occ_type_ == "EDU1" and no_stories_ <= 1:
+                f_arch.append("F10")
+                w_arch.append("T9")
+            elif full_occ_type_ == "EDU2" and no_stories_ <= 1:
+                f_arch.append("F10")
+                w_arch.append("T10")
+            elif full_occ_type_ == "EDU1" and no_stories_ > 1:
+                f_arch.append("F11")
+                w_arch.append("T9")
+            elif full_occ_type_ == "EDU2" and no_stories_ > 1:
+                f_arch.append("F11")
+                w_arch.append("T10")
+            elif full_occ_type_ == "GOV1":
+                f_arch.append("F14")
+                w_arch.append("T19")
+            elif full_occ_type_ == "GOV2":
+                f_arch.append("F14")
+                w_arch.append("T11")
+            elif full_occ_type_ == "IND1":
+                f_arch.append("F9")
+                w_arch.append("T8")
+            elif full_occ_type_ == "IND2" or occ_type_ == "IND3" or occ_type_ == "IND4" or occ_type_ == "IND5" or occ_type_ == "IND6":
+                f_arch.append("F9")
+                w_arch.append("T7")
+            elif full_occ_type_ == "REL1":
+                f_arch.append("F13")
+                w_arch.append("T13")
+            elif full_occ_type_ in RES_TYPES and (found_type_ == "B" or found_type_ == "S") and no_stories_ <= 1:
+                f_arch.append("F2")
+                w_arch.append("T1")
+            elif full_occ_type_ in RES_TYPES and (found_type_ == "B" or found_type_ == "S") and no_stories_ > 1:
+                f_arch.append("F4")
+                w_arch.append("T1")
+            elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
+                                              found_type_ == "W" or found_type_ == "F") and no_stories_ <= 1):
+                f_arch.append("F1")
+                w_arch.append("T1")
+            elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
+                                              found_type_ == "W" or found_type_ == "F") and no_stories_ > 1):
+                f_arch.append("F3")
+                w_arch.append("T1")
+            else:
+                print("Did not match hurricane archetype mappings")
+                print(occ_type_)
+                f_arch.append("")
+                w_arch.append("")
+
+            # Update wind archetypes based on building area
+            if w_arch[len(w_arch) - 1] == "T1" and no_stories_ <= 1 and area_sqft >= 1550:
+                w_arch[len(w_arch) -1] = "T3"
+            elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft < 1550:
+                w_arch[len(w_arch) -1] = "T2"
+            elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft > 1550:
+                w_arch[len(w_arch) -1] = "T5"
 
             if "RES3" in occ_type_:
                 occ_type_ = "RES3"
@@ -122,6 +221,7 @@ class NsiUtil:
                 dgn_lvl.append(NsiUtil.year_built_to_dgn_lvl(year_built_))
                 exact_match.append(exact_match_flag)
                 continue
+
 
             # Assign sheets based on region
             if region.lower() == "westcoast":
@@ -245,6 +345,8 @@ class NsiUtil:
         gdf["year_built"] = year_built
         gdf["dgn_lvl"] = dgn_lvl
         gdf["exact_match"] = exact_match
+        gdf["f_arch"] = f_arch
+        gdf["w_arch"] = w_arch
 
         return gdf
 
