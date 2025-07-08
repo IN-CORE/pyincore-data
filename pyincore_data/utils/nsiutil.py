@@ -91,6 +91,8 @@ class NsiUtil:
         guid = []
         f_arch = []
         w_arch = []
+        archetype = []
+        arch_sw = []
         struct_typ = []
         no_stories = []
         year_built = []
@@ -136,54 +138,58 @@ class NsiUtil:
             exact_match_flag = "Yes"
             found_type_ = row["found_type"]
 
+            # add archetype and arch_sw as zero value
+            archetype.append(0)
+            arch_sw.append(0)
+
             if full_occ_type_ == "AGR1":
-                f_arch.append("F15")
-                w_arch.append("T16")
+                f_arch.append(15)
+                w_arch.append(16)
             elif full_occ_type_ == "COM1":
-                f_arch.append("F8")
-                w_arch.append("T18")
+                f_arch.append(8)
+                w_arch.append(18)
             elif full_occ_type_ == "COM10":
-                f_arch.append("F8")
-                w_arch.append("T6")
+                f_arch.append(8)
+                w_arch.append(6)
             elif full_occ_type_ == "COM2":
-                f_arch.append("F6")
-                w_arch.append("T15")
+                f_arch.append(6)
+                w_arch.append(15)
             elif full_occ_type_ == "COM3":
-                f_arch.append("F5")
-                w_arch.append("T6")
+                f_arch.append(5)
+                w_arch.append(6)
             elif full_occ_type_ == "COM4":
-                f_arch.append("F8")
-                w_arch.append("T18")
+                f_arch.append(8)
+                w_arch.append(18)
             elif full_occ_type_ == "COM5":
-                f_arch.append("F7")
-                w_arch.append("T6")
+                f_arch.append(7)
+                w_arch.append(6)
             elif full_occ_type_ == "COM6" or full_occ_type_ == "COM7":
-                f_arch.append("F12")
-                w_arch.append("T12")
+                f_arch.append(12)
+                w_arch.append(12)
             elif full_occ_type_ == "COM8" or full_occ_type_ == "COM9":
-                f_arch.append("F6")
-                w_arch.append("T6")
+                f_arch.append(6)
+                w_arch.append(6)
             elif full_occ_type_ == "EDU1" and no_stories_ <= 1:
-                f_arch.append("F10")
-                w_arch.append("T9")
+                f_arch.append(10)
+                w_arch.append(9)
             elif full_occ_type_ == "EDU2" and no_stories_ <= 1:
-                f_arch.append("F10")
-                w_arch.append("T10")
+                f_arch.append(10)
+                w_arch.append(10)
             elif full_occ_type_ == "EDU1" and no_stories_ > 1:
-                f_arch.append("F11")
-                w_arch.append("T9")
+                f_arch.append(11)
+                w_arch.append(9)
             elif full_occ_type_ == "EDU2" and no_stories_ > 1:
-                f_arch.append("F11")
-                w_arch.append("T10")
+                f_arch.append(11)
+                w_arch.append(10)
             elif full_occ_type_ == "GOV1":
-                f_arch.append("F14")
-                w_arch.append("T19")
+                f_arch.append(14)
+                w_arch.append(19)
             elif full_occ_type_ == "GOV2":
-                f_arch.append("F14")
-                w_arch.append("T11")
+                f_arch.append(14)
+                w_arch.append(11)
             elif full_occ_type_ == "IND1":
-                f_arch.append("F9")
-                w_arch.append("T8")
+                f_arch.append(9)
+                w_arch.append(8)
             elif (
                 full_occ_type_ == "IND2"
                 or occ_type_ == "IND3"
@@ -191,25 +197,25 @@ class NsiUtil:
                 or occ_type_ == "IND5"
                 or occ_type_ == "IND6"
             ):
-                f_arch.append("F9")
-                w_arch.append("T7")
+                f_arch.append(9)
+                w_arch.append(7)
             elif full_occ_type_ == "REL1":
-                f_arch.append("F13")
-                w_arch.append("T13")
+                f_arch.append(13)
+                w_arch.append(13)
             elif (
                 full_occ_type_ in RES_TYPES
                 and (found_type_ == "B" or found_type_ == "S")
                 and no_stories_ <= 1
             ):
-                f_arch.append("F2")
-                w_arch.append("T1")
+                f_arch.append(2)
+                w_arch.append(1)
             elif (
                 full_occ_type_ in RES_TYPES
                 and (found_type_ == "B" or found_type_ == "S")
                 and no_stories_ > 1
             ):
-                f_arch.append("F4")
-                w_arch.append("T1")
+                f_arch.append(4)
+                w_arch.append(1)
             elif (
                 full_occ_type_ in RES_TYPES
                 and (
@@ -221,8 +227,8 @@ class NsiUtil:
                 )
                 and no_stories_ <= 1
             ):
-                f_arch.append("F1")
-                w_arch.append("T1")
+                f_arch.append(1)
+                w_arch.append(1)
             elif (
                 full_occ_type_ in RES_TYPES
                 and (
@@ -234,13 +240,13 @@ class NsiUtil:
                 )
                 and no_stories_ > 1
             ):
-                f_arch.append("F3")
-                w_arch.append("T1")
+                f_arch.append(3)
+                w_arch.append(1)
             else:
                 print("Did not match hurricane archetype mappings")
                 print(occ_type_)
-                f_arch.append("")
-                w_arch.append("")
+                f_arch.append(0)
+                w_arch.append(0)
 
             # Update wind archetypes based on building area
             if (
@@ -398,8 +404,10 @@ class NsiUtil:
         gdf["year_built"] = year_built
         gdf["dgn_lvl"] = dgn_lvl
         gdf["exact_match"] = exact_match
-        gdf["f_arch"] = f_arch
-        gdf["w_arch"] = w_arch
+        gdf["archetype"] = archetype
+        gdf["arch_flood"] = f_arch
+        gdf["arch_wind"] = w_arch
+        gdf["arch_sw"] = arch_sw
 
         return gdf
 
