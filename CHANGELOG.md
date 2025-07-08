@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Automatic determination of the region by the fips code [#108](https://github.com/IN-CORE/pyincore-data/issues/108)
 - Geopackage support for NSI building inventory conversion [#117](https://github.com/IN-CORE/pyincore-data/issues/117)
 - GitHub action to check linting [#122](https://github.com/IN-CORE/pyincore-data/issues/122)
+- NSI building inventory mapping for hurricane [#125](https://github.com/IN-CORE/pyincore-data/issues/125) 
 
 ### Fixed
 - Certification error in github action's unit test [#119](https://github.com/IN-CORE/pyincore-data/issues/119)
