@@ -166,7 +166,8 @@ class NsiUtil:
             elif full_occ_type_ == "IND1":
                 f_arch.append("F9")
                 w_arch.append("T8")
-            elif full_occ_type_ == "IND2" or occ_type_ == "IND3" or occ_type_ == "IND4" or occ_type_ == "IND5" or occ_type_ == "IND6":
+            elif full_occ_type_ == "IND2" or occ_type_ == "IND3" or occ_type_ == "IND4" or occ_type_ == "IND5" or \
+                    occ_type_ == "IND6":
                 f_arch.append("F9")
                 w_arch.append("T7")
             elif full_occ_type_ == "REL1":
@@ -179,11 +180,11 @@ class NsiUtil:
                 f_arch.append("F4")
                 w_arch.append("T1")
             elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
-                                              found_type_ == "W" or found_type_ == "F") and no_stories_ <= 1):
+                                                   found_type_ == "W" or found_type_ == "F") and no_stories_ <= 1):
                 f_arch.append("F1")
                 w_arch.append("T1")
             elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
-                                              found_type_ == "W" or found_type_ == "F") and no_stories_ > 1):
+                                                   found_type_ == "W" or found_type_ == "F") and no_stories_ > 1):
                 f_arch.append("F3")
                 w_arch.append("T1")
             else:
@@ -194,11 +195,11 @@ class NsiUtil:
 
             # Update wind archetypes based on building area
             if w_arch[len(w_arch) - 1] == "T1" and no_stories_ <= 1 and area_sqft >= 1550:
-                w_arch[len(w_arch) -1] = "T3"
+                w_arch[len(w_arch) - 1] = "T3"
             elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft < 1550:
-                w_arch[len(w_arch) -1] = "T2"
+                w_arch[len(w_arch) - 1] = "T2"
             elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft > 1550:
-                w_arch[len(w_arch) -1] = "T5"
+                w_arch[len(w_arch) - 1] = "T5"
 
             if "RES3" in occ_type_:
                 occ_type_ = "RES3"
@@ -217,7 +218,6 @@ class NsiUtil:
                 dgn_lvl.append(NsiUtil.year_built_to_dgn_lvl(year_built_))
                 exact_match.append(exact_match_flag)
                 continue
-
 
             # Assign sheets based on region
             if region.lower() == "westcoast":
