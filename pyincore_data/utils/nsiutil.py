@@ -136,10 +136,6 @@ class NsiUtil:
             elif full_occ_type_ == "COM4":
                 f_arch.append("F8")
                 w_arch.append("T18")
-            elif full_occ_type_ == "COM10":
-                # This is a duplicate in his code, need to ask about it
-                f_arch.append("F5")
-                w_arch.append("T6")
             elif full_occ_type_ == "COM5":
                 f_arch.append("F7")
                 w_arch.append("T6")
