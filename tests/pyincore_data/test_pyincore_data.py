@@ -6,6 +6,10 @@
 
 import pytest
 
+# Disable SSL verification for urllib in CI
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 from pyincore_data.censusutil import CensusUtil
 
 
