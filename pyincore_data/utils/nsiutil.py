@@ -100,8 +100,26 @@ class NsiUtil:
         total_records = len(gdf)
 
         # Hurricane RES archetypes
-        RES_TYPES = ["RES1-1SNB", "RES1-1SWB", "RES1-2SNB", "RES1-2SWB", "RES1-3SNB", "RES1-3SWB", "RES1-SLNB",
-                     "RES1-SLWB", "RES2", "RES3A", "RES3B", "RES3C", "RES3D", "RES3E", "RES3F", "RES4", "RES5", "RES6"]
+        RES_TYPES = [
+            "RES1-1SNB",
+            "RES1-1SWB",
+            "RES1-2SNB",
+            "RES1-2SWB",
+            "RES1-3SNB",
+            "RES1-3SWB",
+            "RES1-SLNB",
+            "RES1-SLWB",
+            "RES2",
+            "RES3A",
+            "RES3B",
+            "RES3C",
+            "RES3D",
+            "RES3E",
+            "RES3F",
+            "RES4",
+            "RES5",
+            "RES6",
+        ]
 
         cnt_nan = 0
         for i, row in gdf.iterrows():
@@ -166,25 +184,56 @@ class NsiUtil:
             elif full_occ_type_ == "IND1":
                 f_arch.append("F9")
                 w_arch.append("T8")
-            elif full_occ_type_ == "IND2" or occ_type_ == "IND3" or occ_type_ == "IND4" or occ_type_ == "IND5" or \
-                    occ_type_ == "IND6":
+            elif (
+                full_occ_type_ == "IND2"
+                or occ_type_ == "IND3"
+                or occ_type_ == "IND4"
+                or occ_type_ == "IND5"
+                or occ_type_ == "IND6"
+            ):
                 f_arch.append("F9")
                 w_arch.append("T7")
             elif full_occ_type_ == "REL1":
                 f_arch.append("F13")
                 w_arch.append("T13")
-            elif full_occ_type_ in RES_TYPES and (found_type_ == "B" or found_type_ == "S") and no_stories_ <= 1:
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (found_type_ == "B" or found_type_ == "S")
+                and no_stories_ <= 1
+            ):
                 f_arch.append("F2")
                 w_arch.append("T1")
-            elif full_occ_type_ in RES_TYPES and (found_type_ == "B" or found_type_ == "S") and no_stories_ > 1:
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (found_type_ == "B" or found_type_ == "S")
+                and no_stories_ > 1
+            ):
                 f_arch.append("F4")
                 w_arch.append("T1")
-            elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
-                                                   found_type_ == "W" or found_type_ == "F") and no_stories_ <= 1):
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (
+                    found_type_ == "C"
+                    or found_type_ == "P"
+                    or found_type_ == "I"
+                    or found_type_ == "W"
+                    or found_type_ == "F"
+                )
+                and no_stories_ <= 1
+            ):
                 f_arch.append("F1")
                 w_arch.append("T1")
-            elif (full_occ_type_ in RES_TYPES and (found_type_ == "C" or found_type_ == "P" or found_type_ == "I" or
-                                                   found_type_ == "W" or found_type_ == "F") and no_stories_ > 1):
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (
+                    found_type_ == "C"
+                    or found_type_ == "P"
+                    or found_type_ == "I"
+                    or found_type_ == "W"
+                    or found_type_ == "F"
+                )
+                and no_stories_ > 1
+            ):
                 f_arch.append("F3")
                 w_arch.append("T1")
             else:
@@ -194,11 +243,19 @@ class NsiUtil:
                 w_arch.append("")
 
             # Update wind archetypes based on building area
-            if w_arch[len(w_arch) - 1] == "T1" and no_stories_ <= 1 and area_sqft >= 1550:
+            if (
+                w_arch[len(w_arch) - 1] == "T1"
+                and no_stories_ <= 1
+                and area_sqft >= 1550
+            ):
                 w_arch[len(w_arch) - 1] = "T3"
-            elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft < 1550:
+            elif (
+                w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft < 1550
+            ):
                 w_arch[len(w_arch) - 1] = "T2"
-            elif w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft > 1550:
+            elif (
+                w_arch[len(w_arch) - 1] == "T1" and no_stories_ > 1 and area_sqft > 1550
+            ):
                 w_arch[len(w_arch) - 1] = "T5"
 
             if "RES3" in occ_type_:
