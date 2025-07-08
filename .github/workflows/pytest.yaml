@@ -44,7 +44,7 @@ jobs:
 
           # Ensure certifi is installed and export cert location
           micromamba install -y certifi
-          export SSL_CERT_FILE=$(python -m certifi)
+          export SSL_CERT_FILE=$(python -c "import certifi; print(certifi.where())")
           
           # Make test-reports directory
           mkdir -p test-reports
