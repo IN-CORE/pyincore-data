@@ -59,6 +59,10 @@ def test_create_building_inventory_by_county_fips_list():
     )
     assert gdf["struct_typ"].notna().all(), "struct_typ contains NaN values"
     assert gdf["dgn_lvl"].notna().all(), "dgn_lvl contains NaN values"
+    assert gdf["archetype"].notna().all(), "archetype contains NaN values"
+    assert gdf["arch_sw"].notna().all(), "arch_sw contains NaN values"
+    assert gdf["arch_flood"].notna().all(), "f_arch contains NaN values"
+    assert gdf["arch_wind"].notna().all(), "w_arch contains NaN values"
 
 
 def test_create_building_inventory_by_geojson():
@@ -68,6 +72,10 @@ def test_create_building_inventory_by_geojson():
     )
     assert gdf["struct_typ"].notna().all(), "struct_typ contains NaN values"
     assert gdf["dgn_lvl"].notna().all(), "dgn_lvl contains NaN values"
+    assert gdf["archetype"].notna().all(), "archetype contains NaN values"
+    assert gdf["arch_sw"].notna().all(), "arch_sw contains NaN values"
+    assert gdf["arch_flood"].notna().all(), "f_arch contains NaN values"
+    assert gdf["arch_wind"].notna().all(), "w_arch contains NaN values"
 
 
 def test_define_region_by_fips():

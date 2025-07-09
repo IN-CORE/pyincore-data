@@ -71,8 +71,11 @@ class NsiUtil:
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
         Adjusts logic based on the region (WestCoast, MidWest, EastCoast).
 
+        Adds Wind and Flood Archetypes as well as estimated first floor elevation.
+
         Contributors
         | Original Code and Logic: Dylan R. Sanderson
+        | Wind and Flood Archetype Logic: Omar Nofal
         | Implementation: Yong Wook Kim
 
         Inputs:
@@ -89,21 +92,177 @@ class NsiUtil:
         o2b_dict = NsiUtil.read_occ_building_mapping(region)
 
         guid = []
+        f_arch = []
+        w_arch = []
+        archetype = []
+        arch_sw = []
         struct_typ = []
         no_stories = []
         year_built = []
         dgn_lvl = []
+        ffe_elev = []
         exact_match = []
         fallback_count = 0
         total_records = len(gdf)
+
+        # Hurricane RES archetypes
+        RES_TYPES = [
+            "RES1-1SNB",
+            "RES1-1SWB",
+            "RES1-2SNB",
+            "RES1-2SWB",
+            "RES1-3SNB",
+            "RES1-3SWB",
+            "RES1-SLNB",
+            "RES1-SLWB",
+            "RES2",
+            "RES3A",
+            "RES3B",
+            "RES3C",
+            "RES3D",
+            "RES3E",
+            "RES3F",
+            "RES4",
+            "RES5",
+            "RES6",
+        ]
 
         cnt_nan = 0
         for i, row in gdf.iterrows():
             guid.append(str(uuid.uuid4()))
             year_built_ = row["med_yr_blt"]
             no_stories_ = row["num_story"]
+
+            full_occ_type_ = row["occtype"]
             occ_type_ = row["occtype"].split("-")[0]
+
+            area_sqft = row["sqft"]
+            # print(type(area_sqft))
+
             exact_match_flag = "Yes"
+            found_type_ = row["found_type"]
+
+            # add archetype and arch_sw as zero value
+            archetype.append(0)
+            arch_sw.append(0)
+
+            # clac ffe_elev
+            ffe_elev_val = (row["ground_elv"] + row["found_ht"]) * 0.3048
+            ffe_elev.append(ffe_elev_val)
+
+            if full_occ_type_ == "AGR1":
+                f_arch.append(15)
+                w_arch.append(16)
+            elif full_occ_type_ == "COM1":
+                f_arch.append(8)
+                w_arch.append(18)
+            elif full_occ_type_ == "COM10":
+                f_arch.append(8)
+                w_arch.append(6)
+            elif full_occ_type_ == "COM2":
+                f_arch.append(6)
+                w_arch.append(15)
+            elif full_occ_type_ == "COM3":
+                f_arch.append(5)
+                w_arch.append(6)
+            elif full_occ_type_ == "COM4":
+                f_arch.append(8)
+                w_arch.append(18)
+            elif full_occ_type_ == "COM5":
+                f_arch.append(7)
+                w_arch.append(6)
+            elif full_occ_type_ == "COM6" or full_occ_type_ == "COM7":
+                f_arch.append(12)
+                w_arch.append(12)
+            elif full_occ_type_ == "COM8" or full_occ_type_ == "COM9":
+                f_arch.append(6)
+                w_arch.append(6)
+            elif full_occ_type_ == "EDU1" and no_stories_ <= 1:
+                f_arch.append(10)
+                w_arch.append(9)
+            elif full_occ_type_ == "EDU2" and no_stories_ <= 1:
+                f_arch.append(10)
+                w_arch.append(10)
+            elif full_occ_type_ == "EDU1" and no_stories_ > 1:
+                f_arch.append(11)
+                w_arch.append(9)
+            elif full_occ_type_ == "EDU2" and no_stories_ > 1:
+                f_arch.append(11)
+                w_arch.append(10)
+            elif full_occ_type_ == "GOV1":
+                f_arch.append(14)
+                w_arch.append(19)
+            elif full_occ_type_ == "GOV2":
+                f_arch.append(14)
+                w_arch.append(11)
+            elif full_occ_type_ == "IND1":
+                f_arch.append(9)
+                w_arch.append(8)
+            elif (
+                full_occ_type_ == "IND2"
+                or occ_type_ == "IND3"
+                or occ_type_ == "IND4"
+                or occ_type_ == "IND5"
+                or occ_type_ == "IND6"
+            ):
+                f_arch.append(9)
+                w_arch.append(7)
+            elif full_occ_type_ == "REL1":
+                f_arch.append(13)
+                w_arch.append(13)
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (found_type_ == "B" or found_type_ == "S")
+                and no_stories_ <= 1
+            ):
+                f_arch.append(2)
+                w_arch.append(1)
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (found_type_ == "B" or found_type_ == "S")
+                and no_stories_ > 1
+            ):
+                f_arch.append(4)
+                w_arch.append(1)
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (
+                    found_type_ == "C"
+                    or found_type_ == "P"
+                    or found_type_ == "I"
+                    or found_type_ == "W"
+                    or found_type_ == "F"
+                )
+                and no_stories_ <= 1
+            ):
+                f_arch.append(1)
+                w_arch.append(1)
+            elif (
+                full_occ_type_ in RES_TYPES
+                and (
+                    found_type_ == "C"
+                    or found_type_ == "P"
+                    or found_type_ == "I"
+                    or found_type_ == "W"
+                    or found_type_ == "F"
+                )
+                and no_stories_ > 1
+            ):
+                f_arch.append(3)
+                w_arch.append(1)
+            else:
+                print("Did not match hurricane archetype mappings")
+                print(occ_type_)
+                f_arch.append(0)
+                w_arch.append(0)
+
+            # Update wind archetypes based on building area
+            if w_arch[len(w_arch) - 1] == 1 and no_stories_ <= 1 and area_sqft >= 1550:
+                w_arch[len(w_arch) - 1] = 3
+            elif w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft < 1550:
+                w_arch[len(w_arch) - 1] = 2
+            elif w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft > 1550:
+                w_arch[len(w_arch) - 1] = 5
 
             if "RES3" in occ_type_:
                 occ_type_ = "RES3"
@@ -245,6 +404,15 @@ class NsiUtil:
         gdf["year_built"] = year_built
         gdf["dgn_lvl"] = dgn_lvl
         gdf["exact_match"] = exact_match
+        gdf["ffe_elev"] = ffe_elev
+        gdf["archetype"] = archetype
+        gdf["arch_flood"] = f_arch
+        gdf["arch_wind"] = w_arch
+        gdf["arch_sw"] = arch_sw
+
+        # rename ground_elv_m column
+        if "ground_elv_m" in gdf.columns:
+            gdf.rename(columns={"ground_elv_m": "g_elev"}, inplace=True)
 
         return gdf
 
