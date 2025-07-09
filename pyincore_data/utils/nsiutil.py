@@ -97,6 +97,7 @@ class NsiUtil:
         no_stories = []
         year_built = []
         dgn_lvl = []
+        ffe_elev = []
         exact_match = []
         fallback_count = 0
         total_records = len(gdf)
@@ -141,6 +142,10 @@ class NsiUtil:
             # add archetype and arch_sw as zero value
             archetype.append(0)
             arch_sw.append(0)
+
+            # clac ffe_elev
+            ffe_elev_val = (row["ground_elv"] + row["found_ht"]) * 0.3048
+            ffe_elev.append(ffe_elev_val)
 
             if full_occ_type_ == "AGR1":
                 f_arch.append(15)
@@ -404,6 +409,7 @@ class NsiUtil:
         gdf["year_built"] = year_built
         gdf["dgn_lvl"] = dgn_lvl
         gdf["exact_match"] = exact_match
+        gdf["ffe_elev"] = ffe_elev
         gdf["archetype"] = archetype
         gdf["arch_flood"] = f_arch
         gdf["arch_wind"] = w_arch
