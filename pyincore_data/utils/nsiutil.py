@@ -71,8 +71,11 @@ class NsiUtil:
         Function to map HAZUS-specific occupancy types to HAZUS-specific building types.
         Adjusts logic based on the region (WestCoast, MidWest, EastCoast).
 
+        Adds Wind and Flood Archetypes as well as estimated first floor elevation.
+
         Contributors
         | Original Code and Logic: Dylan R. Sanderson
+        | Wind and Flood Archetype Logic: Omar Nofal
         | Implementation: Yong Wook Kim
 
         Inputs:
