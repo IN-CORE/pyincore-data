@@ -98,6 +98,7 @@ class NsiUtil:
         year_built = []
         dgn_lvl = []
         ffe_elev = []
+        g_elev = []
         exact_match = []
         fallback_count = 0
         total_records = len(gdf)
@@ -414,6 +415,10 @@ class NsiUtil:
         gdf["arch_flood"] = f_arch
         gdf["arch_wind"] = w_arch
         gdf["arch_sw"] = arch_sw
+
+        # rename ground_elv_m column
+        if "ground_elv_m" in gdf.columns:
+            gdf.rename(columns={"ground_elv_m": "g_elev"}, inplace=True)
 
         return gdf
 
