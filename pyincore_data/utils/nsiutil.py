@@ -98,7 +98,6 @@ class NsiUtil:
         year_built = []
         dgn_lvl = []
         ffe_elev = []
-        g_elev = []
         exact_match = []
         fallback_count = 0
         total_records = len(gdf)
@@ -255,19 +254,11 @@ class NsiUtil:
                 w_arch.append(0)
 
             # Update wind archetypes based on building area
-            if (
-                w_arch[len(w_arch) - 1] == 1
-                and no_stories_ <= 1
-                and area_sqft >= 1550
-            ):
+            if w_arch[len(w_arch) - 1] == 1 and no_stories_ <= 1 and area_sqft >= 1550:
                 w_arch[len(w_arch) - 1] = 3
-            elif (
-                w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft < 1550
-            ):
+            elif w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft < 1550:
                 w_arch[len(w_arch) - 1] = 2
-            elif (
-                w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft > 1550
-            ):
+            elif w_arch[len(w_arch) - 1] == 1 and no_stories_ > 1 and area_sqft > 1550:
                 w_arch[len(w_arch) - 1] = 5
 
             if "RES3" in occ_type_:
