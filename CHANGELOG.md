@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
-## [Unreleased]
+## [1.0.0] - 2025-07-21
 
 ### Added
 - Conversion of NSI data to IN-CORE building inventory data for Earthquake and Tsunami [#96](https://github.com/IN-CORE/pyincore-data/issues/96)
