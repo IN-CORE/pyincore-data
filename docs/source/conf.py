@@ -31,9 +31,9 @@ project = "pyIncore-data"
 author = "Yong Wook Kim"
 
 # The short X.Y version
-version = "0.8"
+version = "0.1"
 # The full version, including alpha/beta/rc tags
-release = "0.8.0"
+release = "1.0.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -133,6 +133,8 @@ html_theme_options = {
     "includehidden": True,
     "titles_only": False,
 }
+
+html_style = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

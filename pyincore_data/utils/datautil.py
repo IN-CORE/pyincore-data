@@ -81,9 +81,9 @@ class DataUtil:
         result.raise_for_status()
         result_json = result.json()
 
-        collection = FeatureCollection(result_json['features'])
+        collection = FeatureCollection(result_json["features"])
 
-        gdf = gpd.GeoDataFrame.from_features(collection['features'])
+        gdf = gpd.GeoDataFrame.from_features(collection["features"])
         gdf = gdf.set_crs(epsg=4326)
 
         gdf = DataUtil.add_columns_to_gdf(gdf, state_county_fips)
@@ -132,7 +132,7 @@ class DataUtil:
         print("Reading GeoPackage")
         gpkgpd = None
         for layername in fiona.listlayers(infile):
-            gpkgpd = gpd.read_file(infile, layer=layername, crs='EPSG:4326')
+            gpkgpd = gpd.read_file(infile, layer=layername, crs="EPSG:4326")
 
         return gpkgpd
 
@@ -148,7 +148,7 @@ class DataUtil:
             gpd.GeoDataFrame: GeoDataFrame with a new 'guid' column.
         """
         print("Creating GUID column")
-        gdf['guid'] = [str(uuid.uuid4()) for _ in range(len(gdf))]
+        gdf["guid"] = [str(uuid.uuid4()) for _ in range(len(gdf))]
 
         return gdf
 
@@ -169,10 +169,10 @@ class DataUtil:
         countyfips = fips[2:]
         for i, row in gdf.iterrows():
             guid_val = str(uuid.uuid4())
-            gdf.at[i, 'guid'] = guid_val
-            gdf.at[i, 'fips'] = fips
-            gdf.at[i, 'statefips'] = statefips
-            gdf.at[i, 'countyfips'] = countyfips
+            gdf.at[i, "guid"] = guid_val
+            gdf.at[i, "fips"] = fips
+            gdf.at[i, "statefips"] = statefips
+            gdf.at[i, "countyfips"] = countyfips
 
         return gdf
 
@@ -204,7 +204,7 @@ class DataUtil:
         """
         gpkgpd = None
         for layername in fiona.listlayers(infile):
-            gpkgpd = gpd.read_file(infile, layer=layername, crs='EPSG:4326')
+            gpkgpd = gpd.read_file(infile, layer=layername, crs="EPSG:4326")
 
         DataUtil.upload_postgres_gdf(gpkgpd)
 
@@ -220,19 +220,24 @@ class DataUtil:
             bool: True if upload is successful, False otherwise.
         """
         try:
-            db_connection_url = "postgresql://%s:%s@%s:%s/%s" % \
-                                (Config.DB_USERNAME, Config.DB_PASSWORD, Config.DB_URL, Config.DB_PORT, Config.DB_NAME)
+            db_connection_url = "postgresql://%s:%s@%s:%s/%s" % (
+                Config.DB_USERNAME,
+                Config.DB_PASSWORD,
+                Config.DB_URL,
+                Config.DB_PORT,
+                Config.DB_NAME,
+            )
             con = create_engine(db_connection_url)
 
-            print('Dropping ' + str(gdf.geometry.isna().sum()) + ' nulls.')
-            gdf = gdf.dropna(subset=['geometry'])
+            print("Dropping " + str(gdf.geometry.isna().sum()) + " nulls.")
+            gdf = gdf.dropna(subset=["geometry"])
 
-            print('Uploading GeoDataFrame to database')
-            gdf.to_postgis("nsi_raw", con, index=False, if_exists='replace')
+            print("Uploading GeoDataFrame to database")
+            gdf.to_postgis("nsi_raw", con, index=False, if_exists="replace")
 
             con.dispose()
 
-            print('Upload to database completed.')
+            print("Upload to database completed.")
 
             return True
 

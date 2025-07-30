@@ -5,8 +5,12 @@
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
 import pytest
-
 from pyincore_data.censusutil import CensusUtil
+
+# Disable SSL verification for urllib in CI
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 @pytest.fixture
