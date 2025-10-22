@@ -23,17 +23,17 @@ requirements:
   build:
     - python>=3.9
     - pip
-    - numpy>=1.26.0,<2.0a0
+    - numpy>=1.26.0
  
   host:
     - python>=3.9
     - pip
-    - numpy>=1.26.0,<2.0a0
+    - numpy>=1.26.0
      
   run:
     - python>=3.9
     - pyincore>=1.21.0
-    - {{ pin_compatible('numpy') }}
+    - numpy>=1.26.0
     - folium>=0.11.0
     - pandas>=2.1.2
     - geopandas>=0.14.0
