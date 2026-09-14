@@ -33,7 +33,7 @@ setup(
     packages=find_packages(where=".", exclude=["*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
     package_data={"": ["*.ini", "utils/data/nsi/occ_bldg_mapping/**/*"]},
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     install_requires=[line.strip() for line in open("requirements.txt").readlines()],
     project_urls={
         "Bug Reports": "https://github.com/IN-CORE/pyincore-data/issues",
