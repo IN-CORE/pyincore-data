@@ -44,6 +44,23 @@ To install **pyincore-data** package, run
    pip install pyincore-data
 
 
+Census API key
+--------------
+
+The Census methods in ``CensusUtil`` and the FIPS lookups in ``NsiParser`` call the
+`Census Data API <https://api.census.gov/data.html>`_, which requires an API key.
+Request a free key at https://api.census.gov/data/key_signup.html (the key is emailed to you
+and must be activated from the link in that email), then set it as an environment variable
+
+.. code-block:: console
+
+   export CENSUS_API_KEY=your_key
+
+or add ``CENSUS_API_KEY=your_key`` to a ``.env`` file in your working directory.
+You can also pass the key directly, e.g. ``CensusUtil.get_fips_by_state("illinois", api_key="your_key")``.
+
+Tests that call the Census API are skipped when ``CENSUS_API_KEY`` is not set.
+
 **Prerequisite**
 
 * For developers, pre-install must be installed. If not, run `brew install pre-commit` or `pip install pre-commit`.

@@ -6,9 +6,9 @@
 
 import pandas as pd
 import geopandas as gpd
-import requests
 
 from pyincore_data.utils.datautil import DataUtil
+from pyincore_data.utils.censusapiutil import CensusApiUtil, CensusApiKeyError
 from pyincore_data import globals as pyincore_globals
 
 # Static mapping of state names to FIPS codes (since the API doesn't directly return them in this case)
@@ -62,12 +62,13 @@ class NsiParser:
         return merged_gdf
 
     @staticmethod
-    def get_county_fips_by_state(state_name):
+    def get_county_fips_by_state(state_name, api_key: str = None):
         """
         Fetches all county FIPS codes for a given state using the US Census Bureau API.
 
         Args:
             state_name (str): Full state name (e.g., "Illinois").
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             list: A list of dictionaries containing county names and their FIPS codes.
@@ -84,17 +85,12 @@ class NsiParser:
 
         # Census API URL for county-level data
         county_fips_url = f"{pyincore_globals.COUNTY_FIPS_BASE_URL}?get=NAME&for=county:*&in=state:{state_fips}"
-        response = requests.get(county_fips_url)
-
-        if response.status_code != 200:
-            raise ValueError(
-                f"Error fetching counties for state '{state_name}': {response.status_code}"
-            )
-
         try:
-            counties_data = response.json()
-        except ValueError:
-            raise ValueError("Failed to parse JSON response for counties.")
+            counties_data = CensusApiUtil.request_json(county_fips_url, api_key)
+        except CensusApiKeyError:
+            raise
+        except Exception as e:
+            raise ValueError(f"Error fetching counties for state '{state_name}': {e}")
 
         # Ensure counties_data is valid
         if not isinstance(counties_data, list) or len(counties_data) < 2:
@@ -109,18 +105,19 @@ class NsiParser:
         return county_list
 
     @staticmethod
-    def get_county_fips_only_list_by_state(state_name):
+    def get_county_fips_only_list_by_state(state_name, api_key: str = None):
         """
         Fetches a list of FIPS codes for all counties in a given state.
 
         Args:
             state_name (str): Full state name (e.g., "Illinois").
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             list: A list of FIPS codes (strings) for all counties in the state.
         """
         try:
-            counties = NsiParser.get_county_fips_by_state(state_name)
+            counties = NsiParser.get_county_fips_by_state(state_name, api_key)
             fips_list = [county["fips"] for county in counties]
             return fips_list
         except ValueError as e:
@@ -128,13 +125,14 @@ class NsiParser:
             return []
 
     @staticmethod
-    def get_fips_by_state_and_county(state_name, county_name):
+    def get_fips_by_state_and_county(state_name, county_name, api_key: str = None):
         """
         Fetches the FIPS code for a specific county in a given state.
 
         Args:
             state_name (str): Full state name (e.g., "Illinois").
             county_name (str): Full county name (e.g., "Champaign").
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             str: The FIPS code for the specified county.
@@ -142,7 +140,7 @@ class NsiParser:
         """
         try:
             # fetch all counties and their FIPS codes for the state
-            counties = NsiParser.get_county_fips_by_state(state_name)
+            counties = NsiParser.get_county_fips_by_state(state_name, api_key)
 
             # find the county by name
             for county in counties:

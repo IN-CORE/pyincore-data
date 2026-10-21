@@ -4,11 +4,17 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
+import os
+
 import pytest
 
 from pyincore_data.nsiparser import NsiParser
 from pyincore_data.utils.nsiutil import NsiUtil
 from pyincore_data.nsibuildinginventory import NsiBuildingInventory
+
+requires_census_key = pytest.mark.skipif(
+    not os.getenv("CENSUS_API_KEY"), reason="CENSUS_API_KEY is not set"
+)
 
 
 @pytest.fixture
@@ -30,6 +36,7 @@ def test_create_nsi_gdf_by_counties_fips_list():
     assert merged_gdf.shape[0] > 0
 
 
+@requires_census_key
 def test_get_county_fips_by_state():
     state = "illinois"
     fips_list = NsiParser.get_county_fips_by_state(state)
@@ -37,6 +44,7 @@ def test_get_county_fips_by_state():
     assert len(fips_list) > 0
 
 
+@requires_census_key
 def test_get_county_fips_only_list_by_state():
     state = "illinois"
     fips_list = NsiParser.get_county_fips_only_list_by_state(state)
@@ -44,6 +52,7 @@ def test_get_county_fips_only_list_by_state():
     assert len(fips_list) > 0
 
 
+@requires_census_key
 def test_get_fips_by_state_and_county():
     state = "illinois"
     county = "champaign"

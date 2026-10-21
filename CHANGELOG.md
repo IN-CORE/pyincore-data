@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [Unreleased]
+
+### Fixed
+- Census API requires an API key; read it from `CENSUS_API_KEY` or an `api_key=` argument and raise a clear error when it is missing or invalid [#138](https://github.com/IN-CORE/pyincore-data/issues/138)
+
 ## [1.0.0] - 2025-07-21
 
 ### Added
