@@ -4,7 +4,6 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
-import requests
 import os
 import pandas as pd
 import geopandas as gpd
@@ -16,6 +15,7 @@ from zipfile import ZipFile
 
 from pyincore_data.censusviz import CensusViz
 from pyincore_data.utils.datautil import DataUtil
+from pyincore_data.utils.censusapiutil import CensusApiUtil
 from pyincore_data import globals as pyincore_globals
 
 logger = pyincore_globals.LOGGER
@@ -33,6 +33,7 @@ class CensusUtil:
         columns: str = None,
         geo_type: str = None,
         data_name: str = None,
+        api_key: str = None,
     ):
         """Create json and pandas DataFrame for census api request result.
 
@@ -45,6 +46,7 @@ class CensusUtil:
                 e.g, 'GEO_ID,NAME,P005001,P005003,P005004,P005010'
             geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
             data_name (str): Optional for getting different dataset. e.g, 'component'
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             dict, obj, obj: A json list, a dataframe for census api result,
@@ -56,7 +58,7 @@ class CensusUtil:
             state, county, year, data_source, columns, geo_type, data_name
         )
 
-        api_json, api_df = CensusUtil.request_census_api(data_url)
+        api_json, api_df = CensusUtil.request_census_api(data_url, api_key)
 
         # convert df to dataset
         timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -128,37 +130,34 @@ class CensusUtil:
         return data_url
 
     @staticmethod
-    def request_census_api(data_url):
+    def request_census_api(data_url, api_key: str = None):
         """Request census data to api and gets the output data
 
         Args:
-            data_url (str): url for obtaining the data from census api
+            data_url (str): url for obtaining the data from census api, without the key
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
         Returns:
             dict, object: A json list and a dataframe for census api result
 
         """
         # Obtain Census API JSON Data
-        request_json = requests.get(data_url)
-
-        if request_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API. Please check your parameters."
-            # logger.error(error_msg)
-            raise Exception(error_msg)
+        api_json = CensusApiUtil.request_json(data_url, api_key)
 
         # Convert the requested json into pandas dataframe
-
-        api_json = request_json.json()
         api_df = pd.DataFrame(columns=api_json[0], data=api_json[1:])
 
         return api_json, api_df
 
     @staticmethod
-    def get_fips_by_state_county(state: str, county: str, year: str = 2010):
+    def get_fips_by_state_county(
+        state: str, county: str, year: str = 2010, api_key: str = None
+    ):
         """Get FIPS code by using state and county name.
 
         Args:
             state (str): State name. e.g, 'illinois'
             county (str): County name. e.g, 'champaign'
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             str: A string of FIPS code
@@ -166,14 +165,10 @@ class CensusUtil:
         """
         api_url = f"https://api.census.gov/data/{year}/dec/sf1?get=NAME&for=county:*"
         out_fips = None
-        api_json = requests.get(api_url)
+        api_json = CensusApiUtil.request_json(api_url, api_key)
         query_value = county + " County, " + state
-        if api_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API. Please look up Google for getting the FIPS code."
-            raise Exception(error_msg)
 
-        # content_json = api_json.json()
-        df = pd.DataFrame(columns=api_json.json()[0], data=api_json.json()[1:])
+        df = pd.DataFrame(columns=api_json[0], data=api_json[1:])
         selected_row = df.loc[df["NAME"].str.lower() == query_value.lower()]
         if selected_row.size > 0:
             out_fips = selected_row.iloc[0]["state"] + selected_row.iloc[0]["county"]
@@ -185,25 +180,19 @@ class CensusUtil:
         return out_fips
 
     @staticmethod
-    def get_fips_by_state(state: str, year: str = 2010):
+    def get_fips_by_state(state: str, year: str = 2010, api_key: str = None):
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
 
         Args:
             state (str): State name. e.g, 'illinois'
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             obj: A json list of county FIPS code in the given state
 
         """
         api_url = f"https://api.census.gov/data/{year}/dec/sf1?get=NAME&for=county:*"
-        api_json = requests.get(api_url)
-        if api_json.status_code != 200:
-            error_msg = "Failed to download the data from Census API."
-            logger.error(error_msg)
-            raise Exception(error_msg)
-
-        # content_json = api_json.json()
-        out_fips = api_json.json()
+        out_fips = CensusApiUtil.request_json(api_url, api_key)
 
         return out_fips
 
@@ -218,6 +207,7 @@ class CensusUtil:
         out_html: bool = False,
         geo_name: str = "geo_name",
         program_name: str = "program_name",
+        api_key: str = None,
     ):
         """Create Geopandas DataFrame for population dislocation analysis from census dataset.
 
@@ -232,6 +222,7 @@ class CensusUtil:
             out_html (bool): Save processed folium map to html.
             geo_name (str): Name of geo area - used for naming output files.
             program_name (str): Name of directory used to save output files.
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             obj, dict, obj: A dataframe for dislocation analysis,
@@ -276,7 +267,7 @@ class CensusUtil:
             logger.info("Census API data from: " + api_hyperlink)
 
             # Obtain Census API JSON Data
-            apijson, apidf = CensusUtil.request_census_api(api_hyperlink)
+            apijson, apidf = CensusUtil.request_census_api(api_hyperlink, api_key)
             print(apidf.size)
             # Append county data makes it possible to have multiple counties
             appended_countydata.append(apidf)
@@ -410,7 +401,9 @@ class CensusUtil:
         return cen_blockgroup[save_columns], bgmap, out_dataset
 
     @staticmethod
-    def demographic_factors(state_code, county_code, year, geo_type="tract:*"):
+    def demographic_factors(
+        state_code, county_code, year, geo_type="tract:*", api_key: str = None
+    ):
         """Create Geopandas DataFrame for population demographics for a particular county from census dataset.
 
         Args:
@@ -418,6 +411,7 @@ class CensusUtil:
             county_code (int): county FIPS code.
             year (str): Census Year.
             geo_type (str): Name of geo area. e.g, 'tract:*' or 'block%20group:*'
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             obj: A dataframe  of population demographics for a particular county
@@ -431,6 +425,7 @@ class CensusUtil:
             data_source="acs/acs5",
             columns="GEO_ID,B03002_001E,B03002_003E",
             geo_type=geo_type,
+            api_key=api_key,
         )[1]
         df_1["factor_white_nonHispanic"] = (
             df_1[["B03002_001E", "B03002_003E"]]
@@ -445,6 +440,7 @@ class CensusUtil:
             data_source="acs/acs5",
             columns="B25003_001E,B25003_002E",
             geo_type=geo_type,
+            api_key=api_key,
         )[1]
         df_2["factor_owner_occupied"] = df_2.astype(int).apply(
             lambda row: row["B25003_002E"] / row["B25003_001E"], axis=1
@@ -457,6 +453,7 @@ class CensusUtil:
             data_source="acs/acs5",
             columns="B17021_001E,B17021_002E",
             geo_type=geo_type,
+            api_key=api_key,
         )[1]
         df_3["factor_earning_higher_than_national_poverty_rate"] = df_3.astype(
             int
@@ -470,6 +467,7 @@ class CensusUtil:
             columns="B15003_001E,B15003_017E,B15003_018E,B15003_019E,B15003_020E,"
             "B15003_021E,B15003_022E,B15003_023E,B15003_024E,B15003_025E",
             geo_type=geo_type,
+            api_key=api_key,
         )[1]
         df_4["factor_over_25_with_high_school_diploma_or_higher"] = df_4.astype(
             int
@@ -497,6 +495,7 @@ class CensusUtil:
                 data_source="acs/acs5",
                 columns="B18101_001E,B18101_011E,B18101_014E,B18101_030E,B18101_033E",
                 geo_type=geo_type,
+                api_key=api_key,
             )[1]
             df_5["factor_without_disability_age_18_to_65"] = df_5.astype(int).apply(
                 lambda row: (
@@ -517,6 +516,7 @@ class CensusUtil:
                 data_source="acs/acs5",
                 columns="B01003_001E,C21007_006E,C21007_009E,C21007_013E,C21007_016E",
                 geo_type=geo_type,
+                api_key=api_key,
             )[1]
 
             df_5["factor_without_disability_age_18_to_65"] = df_5.astype(int).apply(
@@ -548,12 +548,13 @@ class CensusUtil:
         return df_t
 
     @staticmethod
-    def national_ave_values(year, data_source="acs/acs5"):
+    def national_ave_values(year, data_source="acs/acs5", api_key: str = None):
         """Create Geopandas DataFrame for national population demographics from census dataset.
 
         Args:
             year (str): Census Year.
             data_source (str): Census dataset name. Can be found from https://api.census.gov/data.html
+            api_key (str): Census API key. Defaults to the CENSUS_API_KEY environment variable.
 
         Returns:
             list: A list of dictionaries denoting population demographics for the nation
@@ -567,6 +568,7 @@ class CensusUtil:
             data_source=data_source,
             columns="B03002_001E,B03002_003E",
             geo_type=None,
+            api_key=api_key,
         )[1]
         nav1 = nav1.astype(int)
         nav1_avg = {
@@ -581,6 +583,7 @@ class CensusUtil:
             data_source=data_source,
             columns="B25003_001E,B25003_002E",
             geo_type=None,
+            api_key=api_key,
         )[1]
         nav2 = nav2.astype(int)
         nav2_avg = {
@@ -595,6 +598,7 @@ class CensusUtil:
             data_source=data_source,
             columns="B17021_001E,B17021_002E",
             geo_type=None,
+            api_key=api_key,
         )[1]
         nav3 = nav3.astype(int)
         nav3_avg = {
@@ -610,6 +614,7 @@ class CensusUtil:
             columns="B15003_001E,B15003_017E,B15003_018E,B15003_019E,B15003_020E,"
             "B15003_021E,B15003_022E,B15003_023E,B15003_024E,B15003_025E",
             geo_type=None,
+            api_key=api_key,
         )[1]
         nav4 = nav4.astype(int)
         nav4["temp"] = nav4.apply(
@@ -636,6 +641,7 @@ class CensusUtil:
             data_source=data_source,
             columns="B18101_001E,B18101_011E,B18101_014E,B18101_030E,B18101_033E",
             geo_type=None,
+            api_key=api_key,
         )[1]
         nav5 = nav5.astype(int)
         nav5["temp"] = nav5.apply(

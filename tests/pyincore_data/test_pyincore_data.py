@@ -4,6 +4,8 @@
 # terms of the Mozilla Public License v2.0 which accompanies this distribution,
 # and is available at https://www.mozilla.org/en-US/MPL/2.0/
 
+import os
+
 import pytest
 from pyincore_data.censusutil import CensusUtil
 
@@ -11,6 +13,11 @@ from pyincore_data.censusutil import CensusUtil
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
+
+# every test here calls api.census.gov, which requires an API key
+pytestmark = pytest.mark.skipif(
+    not os.getenv("CENSUS_API_KEY"), reason="CENSUS_API_KEY is not set"
+)
 
 
 @pytest.fixture

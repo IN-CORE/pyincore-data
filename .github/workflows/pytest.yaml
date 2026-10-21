@@ -39,6 +39,8 @@ jobs:
 
       - name: Run tests with pytest
         shell: micromamba-shell {0}
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
         run: |
           echo "${{secrets.PYTEST_USER_TOKEN}}" > tests/pyincore_data/.incorepw
 
@@ -50,4 +52,4 @@ jobs:
           mkdir -p test-reports
 
           # Run pytest
-          python -m pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py --junitxml=test-reports/results.xml
+          python -m pytest --cache-clear -s tests/pyincore_data/test_pyincore_data.py tests/pyincore_data/test_censusapiutil.py --junitxml=test-reports/results.xml
