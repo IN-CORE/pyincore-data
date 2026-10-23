@@ -5,18 +5,15 @@ channels:
   - in-core
   - in-core/label/rc
 dependencies:
-  - python=3.9
-  - pyincore>=1.20.0
-  - numpy>=1.26.0,<2.0a0
-  - pandas>=2.1.2
+  - python>=3.11
+  - pyincore>=1.23.0
+  - numpy>=2.4.0
+  - pandas>=2.1.2,<3.0a0
   - folium>=0.11.0
   - geopandas>=0.14.0
   - ipyleaflet>=0.16.0
   - branca>=0.3.1
   - pytest>=3.9.0
-  - pyincore>=1.21.0
-  - ipyleaflet>=0.16.0
-  - branca>=0.3.1
   - sqlalchemy>=1.4.42
   - geojson>=2.5.0
   - python-dotenv>=0.19.0
