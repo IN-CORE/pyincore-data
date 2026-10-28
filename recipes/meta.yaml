@@ -47,7 +47,11 @@ requirements:
     - requests>=2.31.0
     - setuptools>=65.5.0
     - fiona>=1.9.5
- 
+
+  run_constrained:
+    # brotli-python is pulled in by conda-forge urllib3; <1.2.1 is vulnerable to CVE-2026-111497
+    - brotli-python >=1.2.1
+
 test:
   # Python imports
   imports:
